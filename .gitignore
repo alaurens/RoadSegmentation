@@ -105,3 +105,6 @@ venv.bak/
 
 #annoying files from mac
 .DS_Store
+
+# Dont allow for the images
+*.jpg
