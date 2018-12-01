@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os
 import sys
-import Image
+import images
 import math
 import matplotlib.image as mpimg
 import numpy as np
@@ -49,6 +49,6 @@ def reconstruct_from_labels(image_id):
 
     return im
 
-for i in range(1, 5):
-    reconstruct_from_labels(i)
+#for i in range(1, 5):
+#   reconstruct_from_labels(i)
    
