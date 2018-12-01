@@ -108,3 +108,4 @@ venv.bak/
 
 # Dont allow for the images
 *.jpg
+*.png
