@@ -50,3 +50,16 @@ def mirrorExtend(len,image):
     right = getBorder("right",len,tmp)
 
     return concatImages([ImageOps.mirror(left),tmp,ImageOps.mirror(right)],axis = 0)
+
+
+def applyFilter(filter,image):
+    size = image.size
+    kernel_size = filter.filterargs[0][0]
+    offset = int(kernel_size/2)
+    extended_img = mirrorExtend(offset,image)
+
+    filter_extended_img = extended_img.filter(filter)
+    filter_extended_img.show()
+    filter_img = filter_extended_img.crop((offset,offset,offset+size[0],offset+size[1]))
+
+    return filter_img
