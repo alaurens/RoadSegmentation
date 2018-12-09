@@ -3,7 +3,6 @@ from PIL import Image,ImageFilter,ImageOps
 def getBorder(border,length,image):
     size = image.size
 
-    #image.show()
     if border == "left":
         length = min(length,size[1])
         return image.crop((0,0,length,size[1]))
@@ -40,14 +39,14 @@ def concatImages(images,axis=0):
 
     return new_im
 
-def mirrorExtend(len,image):
-    top = getBorder("top",len,image)
-    bottom = getBorder("bottom",len,image)
+def mirrorExtend(num_added_pixels,image):
+    top = getBorder("top",num_added_pixels,image)
+    bottom = getBorder("bottom",num_added_pixels,image)
 
     tmp = concatImages([ImageOps.flip(top),image,ImageOps.flip(bottom)], axis = 1)
 
-    left = getBorder("left",len,tmp)
-    right = getBorder("right",len,tmp)
+    left = getBorder("left",num_added_pixels,tmp)
+    right = getBorder("right",num_added_pixels,tmp)
 
     return concatImages([ImageOps.mirror(left),tmp,ImageOps.mirror(right)],axis = 0)
 
@@ -59,7 +58,6 @@ def applyFilter(filter,image):
     extended_img = mirrorExtend(offset,image)
 
     filter_extended_img = extended_img.filter(filter)
-    filter_extended_img.show()
     filter_img = filter_extended_img.crop((offset,offset,offset+size[0],offset+size[1]))
 
     return filter_img
