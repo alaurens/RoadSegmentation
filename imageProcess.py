@@ -1,5 +1,5 @@
 from PIL import Image,ImageFilter,ImageOps
-
+import numpy as np
 def getBorder(border,length,image):
     size = image.size
 
@@ -61,3 +61,9 @@ def applyFilter(filter,image):
     filter_img = filter_extended_img.crop((offset,offset,offset+size[0],offset+size[1]))
 
     return filter_img
+
+def pillow2numpy(img):
+    return np.array(img)
+
+def numpy2pillow(np_img):
+    return Image.fromarray(np_img)
