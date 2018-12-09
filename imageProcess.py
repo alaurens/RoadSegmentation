@@ -62,8 +62,14 @@ def applyFilter(filter,image):
 
     return filter_img
 
+def img_float_to_uint8(img):
+    rimg = img - np.min(img)
+    rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
+    return rimg
+
 def pillow2numpy(img):
     return np.array(img)
 
 def numpy2pillow(np_img):
-    return Image.fromarray(np_img)
+    tmp = img_float_to_uint8(np_img)
+    return Image.fromarray(tmp)
