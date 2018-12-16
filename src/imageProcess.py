@@ -6,7 +6,7 @@ import os
 FILE_PATH = os.path.dirname(__file__)
 GROUNDTRUTH_PATH = FILE_PATH + '/../data/groundtruth'
 RELABELED_PATH = FILE_PATH + '/../data/relabeled'
-TRAIN_IMAGES_PATH = FILE_PATH + "/../data/images/"
+TRAIN_IMAGES_PATH = FILE_PATH + "/../data/images"
 TRAIN_FILTERED_IMAGES_PATH = FILE_PATH + "/../data/filteredImages/train"
 
 all_filters = {"blur": ImageFilter.BLUR,
@@ -31,32 +31,32 @@ FILTERS = {"find_edges": ImageFilter.FIND_EDGES,
            }
 
 
-def add_salt_noise(image):
-    """Function to add salt and pepper noise to image"""
+def add_noise(image, type="s&p"):
+    """Function to add noise to image"""
     w, h = image.size
 
-    salt = 100
-    noise = np.random.randint(salt+1, size=(h, w))
+    if type == "s&p":
+        salt = 200
+        noise = np.random.randint(salt+1, size=(h, w))
 
-    idx_salt = noise == salt
-    idx_pepper = noise == 0
+        idx_salt = noise == salt
+        idx_pepper = noise == 0
 
-    np_img = np.array(image)
-    np_img[idx_salt, :] = 255
-    np_img[idx_pepper, :] = 0
+        np_img = np.array(image)
+        np_img[idx_salt, :] = 255
+        np_img[idx_pepper, :] = 0
 
-    return Image.fromarray(np.uint8(np_img))
+        return Image.fromarray(np.uint8(np_img))
 
+    if type == "gauss":
+        c = len(image.getbands())
+        mean = 0
+        std = 4
+        noise = np.random.normal(mean, std, (h, w, c))
+        return Image.fromarray(np.uint8(np.array(image) + noise))
 
-def add_gauss_noise(image, mean, std):
-    """
-    Function used to add noise to an image found at https://github.com/mdbloice/Augmentor/pull/77/files
-    """
-    w, h = image.size
-    c = len(image.getbands())
-
-    noise = np.random.normal(mean, std, (h, w, c))
-    return Image.fromarray(np.uint8(np.array(image) + noise))
+    else:
+        return images
 
 
 def get_border(border, length, image):
@@ -80,11 +80,11 @@ def get_border(border, length, image):
 def concat_images(images, axis=0):
     widths, heights = zip(*(i.size for i in images))
     offset = 0
-
+    rgb = images
     if axis == 1:
         max_width = max(widths)
         total_height = sum(heights)
-        new_im = Image.new('RGB', (max_width, total_height))
+        new_im = Image.new(images[0].mode, (max_width, total_height))
 
         for im in images:
             new_im.paste(im, (0, offset))
@@ -92,7 +92,7 @@ def concat_images(images, axis=0):
     else:
         total_width = sum(widths)
         max_height = max(heights)
-        new_im = Image.new('RGB', (total_width, max_height))
+        new_im = Image.new(images[0].mode, (total_width, max_height))
         for im in images:
             new_im.paste(im, (offset, 0))
             offset += im.size[0]
@@ -131,6 +131,35 @@ def apply_set_of_filters(filters, image):
     return [apply_filter(filt, image) for filt_name, filt in filters.items()]
 
 
+def rotate_with_extension(image, alpha):
+
+    # determine if alpha is larger than 90 degrees and rotate accordingly
+    quarter = int(alpha / 90)
+    image = image.rotate(quarter * 90)
+    alpha = alpha - (quarter * 90)
+
+    # size of image
+    size = image.size[0]
+    # get radians
+    alpha_rad = alpha/180 * np.pi
+
+    # Compute the size of the extended image needed to keep an image of the
+    # right size after cropping
+    cos = np.cos(alpha_rad)
+    sin = np.sin(alpha_rad)
+    L = int(size * (sin + cos))
+
+    # Extend the image then rotate it
+    extend = mirror_extend(int((L-size)/2), image)
+    rotate = extend.rotate(alpha, expand=1)
+    # Get the current side length of the rotated image and compute the
+    # desired height
+    side = rotate.size[0]
+    h = (side - size)/2
+    # Crop the image
+    return rotate.crop((h, h, h + size, h+size))
+
+
 def generate_filtered_images():
 
     images = os.listdir(TRAIN_IMAGES_PATH)
@@ -145,7 +174,18 @@ def generate_filtered_images():
                 filtered_img.save(TRAIN_FILTERED_IMAGES_PATH + "/" + file_name, "PNG")
 
 
-def relabel():
+def relabel(img):
+
+    np_img = pillow2numpy(img)
+    max = np.max(np_img)
+
+    np_img[np_img <= (max*0.9)] = 0
+    np_img[np_img > (max*0.9)] = 1
+
+    return numpy2pillow(np_img)
+
+
+def relabel_all_images():
 
     label_imgs = os.listdir(GROUNDTRUTH_PATH)
 
@@ -154,19 +194,57 @@ def relabel():
 
     for img_name in label_imgs:
         img = Image.open(GROUNDTRUTH_PATH + '/' + img_name)
-        numpy_img = pillow2numpy(img)
-        max = np.max(numpy_img)
-
-        numpy_img[numpy_img <= (max*0.9)] = 0
-        numpy_img[numpy_img > (max*0.9)] = 1
-
-        numpy2pillow(numpy_img).save(RELABELED_PATH + '/' + img_name, "PNG")
+        relabel(img).save(RELABELED_PATH + '/' + img_name, "PNG")
 
 
 def img_float_to_uint8(img):
     rimg = img - np.min(img)
     rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
     return rimg
+
+
+def get_patches(np_img, patch_dim):
+    if len(np_img.shape) == 2:
+        np_img = np.expand_dims(np_img, axis=3)
+    size, _, num_channels = np_img.shape
+
+    dim = (0, patch_dim, patch_dim, num_channels)
+    patches = []
+    for i in range(0, size, patch_dim):
+        for j in range(0, size, patch_dim):
+            patch = np_img[i:i+patch_dim, j:j+patch_dim, :]
+
+            patches.append(patch)
+    patches = np.asarray(patches)
+    return patches
+
+
+def generate_rand_image(image, groundtruth, noise=True, flip=True):
+
+    size = image.size[0]
+
+    rand_rotate = np.random.randint(360)
+
+    image = rotate_with_extension(image, rand_rotate)
+    groundtruth = rotate_with_extension(groundtruth, rand_rotate)
+
+    if noise:
+        noises = ["s&p", "gauss"]
+        num_noises = len(noises)
+        noise_rand = np.random.randint(num_noises + 1)
+        if noise_rand < num_noises:
+            image = add_noise(image, type=noises[noise_rand])
+
+    if flip:
+        rand_flip = np.random.randint(3)
+        if rand_flip == 1:
+            image = ImageOps.flip(image)
+            groundtruth = ImageOps.flip(groundtruth)
+        if rand_flip == 2:
+            image = ImageOps.mirror(image)
+            groundtruth = ImageOps.mirror(groundtruth)
+
+    return (image, groundtruth)
 
 
 def pillow2numpy(img):
