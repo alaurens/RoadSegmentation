@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import implementation_helpers as ih
 import matplotlib.image as mpimg
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,13 +10,15 @@ import re
 import skimage.io as io
 import imageProcess as ip
 import skimage.transform as trans
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler
+from keras.callbacks import ModelCheckpoint
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from keras.layers import BatchNormalization
+from keras.models import *
+from keras.layers import *
+from keras.optimizers import *
+from keras import backend as keras
 
-
-
-def unet1(pretrained_weights = None,input_size = (400,400,3)):
+def unet(pretrained_weights = None,input_size = (400,400,3)):
     
     inputs = Input(input_size)
     conv1 = Conv2D(16,3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs) 
@@ -60,7 +61,7 @@ def unet1(pretrained_weights = None,input_size = (400,400,3)):
     conv7 = Conv2D(16,3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv7)
     conv8 = Conv2D(1, 1, activation = 'sigmoid')(conv7)
 
-    model = Model(input = inputs, output = conv8)
+    model = Model(inputs = inputs, outputs = conv8)
 
     model.compile(optimizer = Adam(lr = 1e-4), loss = 'binary_crossentropy', metrics = ['accuracy'])
     
@@ -70,15 +71,3 @@ def unet1(pretrained_weights = None,input_size = (400,400,3)):
     	model.load_weights(pretrained_weights)
 
     return model
-
-def train_Generator(imgs,label,batch_size):
-
-    batch_imgs = np.zeros((batch_size,400,400,3))
-    batch_label = np.zeros((batch_size,400,400,1))
-    while True: 
-        for i in range (batch_size):
-            index = np.random.choice(len(imgs),1)
-            batch_imgs[i]= imgs[index]
-            batch_label[i]= label[index]
-            yield batch_imgs,batch_label
-
