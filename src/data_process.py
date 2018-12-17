@@ -29,16 +29,6 @@ def load_image_train():
     return imgs, a3d
 
 
-def load_image_test(number_img):
-
-    test_folder = 'test_set_images/test_'
-    for i in range(1, number_img+1):
-        direc = test_folder + str(i) + "/test_" + str(i) + ".png"
-        test_imgs = np.asarray([load_image(direc)])
-        test_imgs = np.squeeze(test_imgs, axis=0)
-        yield gr.patch_generator(test_imgs, 608)
-
-
 def save_results(TEST_PREDICTED_IMAGES_PATH, files_to_save):
 
     if not os.path.exists(TEST_PREDICTED_IMAGES_PATH):
