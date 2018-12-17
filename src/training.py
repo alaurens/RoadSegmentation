@@ -32,7 +32,7 @@ def train_generator(patch_dim):
         mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
         maks = relabel(mask)
 
-        #img, mask = generate_rand_image(img, mask, noise=True, flip=True)
+        img, mask = generate_rand_image(img, mask, noise=True, flip=True)
 
         np_img = pillow2numpy(img)
         np_mask = pillow2numpy(mask)/255
