@@ -2,6 +2,7 @@ from PIL import Image, ImageFilter, ImageOps
 import numpy as np
 import re
 import os
+from paths_to_data import *
 
 FILE_PATH = os.path.dirname(__file__)
 GROUNDTRUTH_PATH = FILE_PATH + '/../data/groundtruth'

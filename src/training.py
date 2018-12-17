@@ -1,10 +1,6 @@
-from src.imageProcess import *
+from imageProcess import *
+from paths_to_data import *
 import numpy as np
-
-FILE_PATH = os.path.dirname(__file__)
-GROUNDTRUTH_PATH = FILE_PATH + '/../data/groundtruth/'
-TRAIN_IMAGES_PATH = FILE_PATH + "/../data/images/"
-TRAIN_FILTERED_IMAGES_PATH = FILE_PATH + "/../data/filteredImages/train"
 
 
 def train_generator(patch_dim):
