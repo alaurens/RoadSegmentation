@@ -1,9 +1,7 @@
 import numpy as np
 import math  
 import imageProcess as ip
-
-
-
+"""
 def train_generator(imgs,label,batch_size):
 
     batch_imgs = np.zeros((batch_size,400,400,3))
@@ -14,7 +12,7 @@ def train_generator(imgs,label,batch_size):
             batch_imgs[i] = imgs[index]
             batch_label[i] = label[index]
             yield batch_imgs,batch_label
-            
+"""         
 def get_patch(img,patch_dim):
     num_channels = img.shape[2]
     size = np.size(img, 0)
@@ -44,14 +42,19 @@ def patch_generator(test_image, patch_dim):
     return vec 
 
 def prediction_generator(prediction_patch):
+    patch_size = 200
+    test_size = 608
     
+    enlarged_size = (1 + int(test_size/ patch_size)) * patch_size
+    
+    a = []
+    b = []
     number_patch = (prediction_patch.shape[0])
-    len_patch = math.sqrt(number_patch)
+    for i in range(0,16,4):
+        a = []
+        for j in range(4):
+            a.append(prediction_patch[i+j])
+        
+        b.append(a)
+    return np.asarray(b)      
     
-    for i in range (0,prediction_patch.shape[0],len_patch):
-        for j in range (0,prediction_patch.shape[0],len_patch):
-            img[i,j] = prediction_patch[j+i*len_patch]
-    
-    img = ip.numpy2pillow(img)
-    
-    return img

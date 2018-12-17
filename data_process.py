@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import implementation_helpers as ih
 import generator as gr
 import sys
 import images
@@ -34,7 +33,7 @@ def load_image_test(number_img):
         direc = test_folder + str(i) + "/test_" + str(i) + ".png"
         test_imgs = np.asarray([load_image(direc)])
         test_imgs = np.squeeze(test_imgs, axis=0)
-        yield gr.patch_generator(test_imgs,608)
+        yield gr.patch_generator(test_imgs,200)
          
 def save_results (TEST_PREDICTED_IMAGES_PATH, files_to_save):
     
@@ -44,6 +43,6 @@ def save_results (TEST_PREDICTED_IMAGES_PATH, files_to_save):
   
         print(item.shape)
         
-        img = ip.numpy2pillow(item.squeeze())
+        img = numpy2pillow(item.squeeze())
         file_name =  "{}.png".format(i)
         img.save(TEST_PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
