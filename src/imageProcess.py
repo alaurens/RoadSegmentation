@@ -228,8 +228,8 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
     image = rotate_with_extension(image, rand_rotate)
     groundtruth = rotate_with_extension(groundtruth, rand_rotate)
-
-    if noise:
+    
+    if False:
         noises = ["s&p", "gauss"]
         num_noises = len(noises)
         noise_rand = np.random.randint(num_noises + 1)
