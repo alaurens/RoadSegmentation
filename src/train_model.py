@@ -10,6 +10,7 @@ model = unet(input_size=(in_size, in_size, 3), layers=layers, pretrained_weights
 
 train_data_gen = train_generator(in_size)
 validation_data_gen = validation_generator(in_size)
+test_data_gen = test_generator(in_size)
 
 model_checkpoint = ModelCheckpoint('weights.hdf5', monitor='acc', verbose=1, save_best_only=True)
 Learning_reduction = ReduceLROnPlateau(monitor='acc', factor=0.3, patience=10, verbose=1, mode='auto',

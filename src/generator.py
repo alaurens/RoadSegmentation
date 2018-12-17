@@ -1,8 +1,10 @@
 import numpy as np
 import math
 import re
+import os
 from paths_to_data import *
-from imageProcess import *
+from image_process import *
+from data_process import *
 
 
 def train_generator(patch_dim):
@@ -55,42 +57,20 @@ def validation_generator(patch_dim):
             yield batch_img, batch_mask
 
 
-def load_image_test(number_img):
+def test_generator(patch_dim):
 
-    test_folder = 'test_set_images/test_'
-    for i in range(1, number_img+1):
-        direc = TEST_FOLDER_PATH + '/test_' + str(i) + "/test_" + str(i) + ".png"
-        test_imgs = np.asarray([load_image(direc)])
-        test_imgs = np.squeeze(test_imgs, axis=0)
-        yield patch_generator(test_imgs, 608)
+    images_name = os.listdir(TEST_FOLDER_PATH)
+    pattern = re.compile('test_[0-9]+')
+    for file in images_name:
+        if not pattern.match(file):
+            continue
 
+        img = Image.open(TEST_FOLDER_PATH + "/" + file + '/' + file + '.png')
 
-def patch_generator(test_image, patch_dim):
+        np_img = pillow2numpy(img)
 
-    if np.size(test_image, 0) % patch_dim == 0:
-        test_image = test_image
-    else:
-        test_image = numpy2pillow(test_image)
-        add_pixel = patch_dim*(np.floor(np.size(test_image, 0) /
-                                        patch_dim)+1) - np.size(test_image, 0)
-        test_image = mirror_extend(add_pixel/2, test_image)
-        test_image = pillow2numpy(test_image)
+        np_img = resize_test_image(np_img, patch_dim)
 
-    vec = get_patches(test_image, patch_dim)
+        batch_img = get_patches(np_img, patch_dim)
 
-    return vec
-
-
-def prediction_generator(prediction_patch):
-
-    number_patch = (prediction_patch.shape[0])
-    len_patch = int(math.sqrt(number_patch))
-    img = []
-
-    for i in range(0, prediction_patch.shape[0], len_patch):
-        for j in range(0, prediction_patch.shape[0], len_patch):
-            img[i, j] = prediction_patch[j+i*len_patch]
-
-    img = numpy2pillow(img)
-
-    return img
+        yield batch_img
