@@ -47,7 +47,7 @@ def add_noise(image, type="s&p"):
     if type == "gauss":
         c = len(image.getbands())
         mean = 0
-        std = 4
+        std = 3
         noise = np.random.normal(mean, std, (h, w, c))
         return Image.fromarray(np.uint8(np.array(image) + noise))
 
@@ -224,7 +224,7 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
     image = rotate_with_extension(image, rand_rotate)
     groundtruth = rotate_with_extension(groundtruth, rand_rotate)
 
-    if False:
+    if noise:
         noises = ["s&p", "gauss"]
         num_noises = len(noises)
         noise_rand = np.random.randint(num_noises + 1)
