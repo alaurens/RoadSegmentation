@@ -68,6 +68,8 @@ def test_generator(patch_dim):
         img = Image.open(TEST_FOLDER_PATH + "/" + file + '/' + file + '.png')
 
         np_img = pillow2numpy(img)
+        # add axis dimension 3 in order to test on neural net
+        np_img = np.expand_dims(np_img, axis=3)
 
         np_img = resize_test_image(np_img, patch_dim)
 

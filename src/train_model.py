@@ -4,7 +4,7 @@ from generator import *
 
 
 in_size = 200
-layers = list(map(lambda x: x * 2, [16, 32, 64, 128]))
+layers = [16, 32, 64, 128]
 
 model = unet(input_size=(in_size, in_size, 3), layers=layers, pretrained_weights=None)
 
