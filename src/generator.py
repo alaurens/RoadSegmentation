@@ -65,21 +65,6 @@ def load_image_test(number_img):
         yield patch_generator(test_imgs, 608)
 
 
-def get_patch(img, patch_dim):
-    num_channels = img.shape[2]
-    size = np.size(img, 0)
-    dim = (0, patch_dim, patch_dim, num_channels)
-    patches = []
-    for i in range(0, size, patch_dim):
-        for j in range(0, size, patch_dim):
-            patch = img[i:i+patch_dim, j:j+patch_dim, :]
-
-            patches.append(patch)
-
-    patches = np.asarray(patches)
-    return patches
-
-
 def patch_generator(test_image, patch_dim):
 
     if np.size(test_image, 0) % patch_dim == 0:
@@ -91,7 +76,7 @@ def patch_generator(test_image, patch_dim):
         test_image = mirror_extend(add_pixel/2, test_image)
         test_image = pillow2numpy(test_image)
 
-    vec = get_patch(test_image, patch_dim)
+    vec = get_patches(test_image, patch_dim)
 
     return vec
 

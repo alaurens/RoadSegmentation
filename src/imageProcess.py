@@ -243,6 +243,26 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
     return (image, groundtruth)
 
 
+def reconstruct_images(patches, num_images):
+
+    num_patches = patches.shape[0]
+    patches_per_img = int(num_patches / num_images)
+    patches_per_side = int(math.sqrt(patches_per_img))
+    images = []
+
+    width = patches.shape[2] * patches_per_side
+    num_channels = patches.shape[3]
+
+    for _ in range(num_images):
+        b = np.empty((0, width, num_channels))
+        for i in range(0, patches_per_img, patches_per_side):
+            tmp = np.concatenate((patches[i:i+4]), axis=1)
+            b = np.concatenate((b, tmp), axis=0)
+
+        images.append(b)
+    return images
+
+
 def pillow2numpy(img):
     return np.array(img)
 
