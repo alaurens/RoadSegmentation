@@ -30,11 +30,12 @@ def train_generator(patch_dim):
 
         img = Image.open(TRAIN_IMAGES_PATH + "/" + file)
         mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
+        maks = relabel(mask)
 
         #img, mask = generate_rand_image(img, mask, noise=True, flip=True)
 
         np_img = pillow2numpy(img)
-        np_mask = pillow2numpy(mask)
+        np_mask = pillow2numpy(mask)/255
 
         batch_img = get_patches(np_img, patch_dim)
         batch_mask = get_patches(np_mask, patch_dim)

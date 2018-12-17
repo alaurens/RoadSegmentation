@@ -249,6 +249,7 @@ def pillow2numpy(img):
 
 def numpy2pillow(np_img):
     tmp = img_float_to_uint8(np_img)
+    tmp = tmp.squeeze()
     return Image.fromarray(tmp)
 
 

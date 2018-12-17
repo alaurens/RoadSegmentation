@@ -4,10 +4,9 @@ from generator import *
 from training import *
 
 
-image, label = load_image_train()
+images, label = load_image_train()
 
-
-in_size = 80
+in_size = 400
 model = unet(input_size=(in_size, in_size, 3), pretrained_weights=None)
 #train_image_generator = train_generator2(images, label, 1)
 train_image_generator = train_generator(in_size)
