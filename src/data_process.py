@@ -29,19 +29,6 @@ def load_image_train():
     return imgs, a3d
 
 
-def save_results(TEST_PREDICTED_IMAGES_PATH, files_to_save):
-
-    if not os.path.exists(TEST_PREDICTED_IMAGES_PATH):
-        os.mkdir(TEST_PREDICTED_IMAGES_PATH)
-    for i, item in enumerate(files_to_save):
-
-        print(item.shape)
-
-        img = ip.numpy2pillow(item.squeeze())
-        file_name = "{}.png".format(i)
-        img.save(TEST_PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
-
-
 def resize_test_image(test_image, patch_dim):
 
     if len(test_image.shape) == 2:
@@ -119,3 +106,23 @@ def get_patches(np_img, patch_dim):
     patches = np.asarray(patches)
 
     return patches
+
+
+def save_results(files_to_save):
+
+    if not os.path.exists(PREDICTED_IMAGES_PATH):
+        os.mkdir(PREDICTED_IMAGES_PATH)
+    for i, item in enumerate(files_to_save):
+
+        print(item.shape)
+
+        img = ip.numpy2pillow(item.squeeze())
+        file_name = "{}.png".format(i)
+        img.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
+
+
+def create_submission(submission_filename):
+
+    files = os.listdir(PREDICTED_IMAGES_PATH)
+    images_name = list(filter(lambda x: x.endswith('.png'), files))
+    masks_to_submission(submission_filename, images_name)
