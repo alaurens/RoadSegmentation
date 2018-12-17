@@ -4,6 +4,7 @@ import generator as gr
 import sys
 import math
 import matplotlib.image as mpimg
+from paths_to_data import *
 
 
 def load_image(infilename):
@@ -13,18 +14,17 @@ def load_image(infilename):
 
 def load_image_train():
 
-    image_folder = "images/"
-    files = os.listdir(image_folder)
+    files = os.listdir(TRAIN_IMAGES_PATH)
     n = len(files)
-    print("Loading " + str(n) + " images")
-    imgs = np.asarray([load_image(image_folder + files[i]) for i in range(n) if 'png' in files[i]])
-    print(np.shape(imgs))
-    groundtruth_folder = 'groundtruth/'
-    print("Loading " + str(n) + " images")
-    groundtruth_imgs = np.asarray([load_image(groundtruth_folder + files[i])
+    #print("Loading " + str(n) + " images")
+    imgs = np.asarray([load_image(TRAIN_IMAGES_PATH + files[i])
+                       for i in range(n) if 'png' in files[i]])
+    # print(np.shape(imgs))
+    #print("Loading " + str(n) + " images")
+    groundtruth_imgs = np.asarray([load_image(GROUNDTRUTH_PATH + files[i])
                                    for i in range(n) if 'png' in files[i]])
     a3d = np.expand_dims(groundtruth_imgs, axis=3)
-    print(np.shape(a3d))
+    # print(np.shape(a3d))
 
     return imgs, a3d
 

@@ -4,11 +4,6 @@ import re
 import os
 from paths_to_data import *
 
-FILE_PATH = os.path.dirname(__file__)
-GROUNDTRUTH_PATH = FILE_PATH + '/../data/groundtruth'
-RELABELED_PATH = FILE_PATH + '/../data/relabeled'
-TRAIN_IMAGES_PATH = FILE_PATH + "/../data/images"
-TRAIN_FILTERED_IMAGES_PATH = FILE_PATH + "/../data/filteredImages/train"
 
 all_filters = {"blur": ImageFilter.BLUR,
                "contour": ImageFilter.CONTOUR,
@@ -228,7 +223,7 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
     image = rotate_with_extension(image, rand_rotate)
     groundtruth = rotate_with_extension(groundtruth, rand_rotate)
-    
+
     if False:
         noises = ["s&p", "gauss"]
         num_noises = len(noises)
