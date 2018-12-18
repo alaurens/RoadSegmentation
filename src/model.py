@@ -7,7 +7,7 @@ from keras.optimizers import *
 from keras import backend as keras
 
 
-DROPOUT = 0.5
+DROPOUT = 0.1
 
 
 def up_block(input_layer, layer_size, concat_layer, batch_norm=True,
@@ -75,8 +75,8 @@ def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=
 
     pool2, conv2 = down_block(pool1, layers[1])
 
-    pool3, conv3 = down_block(pool2, layers[2], dropout=0)
-    drop3 = Dropout(0.5)(conv3)
+    pool3, conv3 = down_block(pool2, layers[2], dropout=DROPOUT)
+
     conv4 = straight_block(pool3, layers[3], dropout=DROPOUT)
 
     conv5 = up_block(conv4, layers[2], drop3)
