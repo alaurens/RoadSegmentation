@@ -6,11 +6,11 @@ import h5py
 
 num_test_imgs = 50
 original_image_size = 608
-weights = WEIGHTS_PATH + '/' + 'weights144.hdf5'
-patch_dim = 80
+weights = WEIGHTS_PATH + '/' + '2weights48.hdf5'
+patch_dim = 400
 channels = 3
 
-layers = [48, 96, 192, 384]
+layers = [64, 128, 256, 512]
 
 test_data_gen = test_generator(patch_dim, num_test_imgs)
 
