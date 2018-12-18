@@ -21,7 +21,7 @@ def transform_line(line):
 
 
 def combine_all_logs():
-    num_files = 240
+    num_files = 255
     fout = open(LOGS_PATH + "/combined.csv", "w")
     # first file:
     f = open(LOGS_PATH + "/log1.csv")
@@ -56,3 +56,6 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
                              '[' + ' '.join("{:.6f}".format(l) for l in loss_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_acc_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_loss_list) + ']'])
+
+
+combine_all_logs()

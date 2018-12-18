@@ -82,7 +82,7 @@ def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=
 
     pool2, conv2 = down_block(pool1, layers[1], activation_layer=activation)
 
-    pool3, conv3 = down_block(pool2, layers[2], dropout=DROPOUT, activation_layer=activation)
+    pool3, conv3 = down_block(pool2, layers[2], dropout=0, activation_layer=activation)
 
     conv4 = straight_block(pool3, layers[3], dropout=DROPOUT, activation_layer=activation)
 
