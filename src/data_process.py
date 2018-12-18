@@ -116,7 +116,7 @@ def save_results(files_to_save):
 
         print(item.shape)
 
-        img = ip.numpy2pillow(item.squeeze())
+        img = numpy2pillow(item.squeeze())
         file_name = "{}.png".format(i)
         img.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 
