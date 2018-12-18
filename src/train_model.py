@@ -14,7 +14,7 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
         batch_norm = "batch norm"
     else:
         batch_norm = "not batch norm"
-    with open(LOGS_PATH + '/log' + str(i) + '.csv', mode='w') as log_file:
+    with open(LOGS_PATH + '/log' + str(iter) + '.csv', mode='w') as log_file:
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         log_writer.writerow(['input size', 'layers', 'number epochs',
@@ -32,47 +32,57 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
 
 
 iter = 0
+epoch_step = 10
 if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 layers_size = [16, 32, 64, 128]
+
+
 for in_size in [40, 80, 160, 200, 320, 400]:
+
+    train_data_gen = train_generator(in_size)
+    validation_data_gen = validation_generator(in_size)
+    test_data_gen = test_generator(in_size)
+
     for i in range(1, 5):
-        for steps_per_epoch in range(100, 1101, 200):
-            for epochs in range(10, 61, 10):
-                for unet_num in range(0, 1):
+
+        layers = list(map(lambda x: (i+1)*x, layers_size))
+
+        for steps_per_epoch in range(1, 701, 200):
+            for unet_num in range(0, 2):
+                if unet_num == 0:
+                    model = unet(input_size=(in_size, in_size, 3),
+                                 layers=layers,
+                                 pretrained_weights=None)
+                else:
+                    model = unet2(input_size=(in_size, in_size, 3),
+                                  layers=layers,
+                                  pretrained_weights=None)
+
+                Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
+                                                       verbose=1, mode='auto',
+                                                       min_delta=0.0001, cooldown=0, min_lr=0)
+                Early_Stopping = EarlyStopping(monitor='val_acc', min_delta=0.00001, patience=10,
+                                               verbose=1, mode='auto',
+                                               baseline=None, restore_best_weights=False)
+                last_epoch = 0
+                for epochs in range(1, 7+1):
+
                     iter = iter+1
-                    layers = list(map(lambda x: (i+1)*x, layers_size))
-
-                    if unet_num == 0:
-                        model = unet(input_size=(in_size, in_size, 3),
-                                     layers=layers,
-                                     pretrained_weights=None)
-                    else:
-                        model = unet2(input_size=(in_size, in_size, 3),
-                                      layers=layers,
-                                      pretrained_weights=None)
-
-                    train_data_gen = train_generator(in_size)
-                    validation_data_gen = validation_generator(in_size)
-                    test_data_gen = test_generator(in_size)
+                    init_epoch = last_epoch
+                    last_epoch = epoch_step*epochs
 
                     history = History()
                     model_checkpoint = ModelCheckpoint(LOGS_PATH + '/weights' + str(iter) + '.hdf5',
                                                        monitor='val_acc', verbose=1, save_best_only=True)
 
-                    Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
-                                                           verbose=1, mode='auto',
-                                                           min_delta=0.0001, cooldown=0, min_lr=0)
-                    Early_Stopping = EarlyStopping(monitor='val_acc', min_delta=0.00001, patience=10,
-                                                   verbose=1, mode='auto',
-                                                   baseline=None, restore_best_weights=False)
-
-                    model.fit_generator(train_data_gen, steps_per_epoch=steps_per_epoch, epochs=epochs,
+                    model.fit_generator(train_data_gen, steps_per_epoch=steps_per_epoch,
+                                        epochs=last_epoch, initial_epoch=init_epoch,
                                         callbacks=[Learning_reduction, history,
                                                    Early_Stopping, model_checkpoint],
                                         validation_steps=20, validation_data=validation_data_gen)
 
                     hist = history.history
-                    log_info(iter, in_size, layers, epochs, steps_per_epoch,
+                    log_info(iter, in_size, layers, last_epoch, steps_per_epoch,
                              unet_num, hist['acc'], hist['val_acc'],
                              hist['loss'], hist['val_loss'])
