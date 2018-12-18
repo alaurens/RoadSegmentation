@@ -79,7 +79,7 @@ def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=
 
     conv4 = straight_block(pool3, layers[3], dropout=DROPOUT)
 
-    conv5 = up_block(conv4, layers[2], drop3)
+    conv5 = up_block(conv4, layers[2], conv3)
 
     conv6 = up_block(conv5, layers[1], conv2)
 
