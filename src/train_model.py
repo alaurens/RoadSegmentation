@@ -38,11 +38,10 @@ if not os.path.exists(LOGS_PATH):
 layers_size = [32, 64, 128, 256]
 
 
-for in_size in [160, 200, 400]:
+for in_size in [200, 400]:
 
     train_data_gen = train_generator(in_size)
     validation_data_gen = validation_generator(in_size)
-    test_data_gen = test_generator(in_size)
 
     for i in range(1, 3):
 
