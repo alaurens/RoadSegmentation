@@ -41,10 +41,6 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
              val_acc_list, loss_list, val_loss_list):
     if not os.path.exists(LOGS_PATH):
         os.mkdir(LOGS_PATH)
-    if unet_num == 1:
-        batch_norm = "batch norm"
-    else:
-        batch_norm = "not batch norm"
     with open(LOGS_PATH + '/log' + str(iter) + '.csv', mode='w') as log_file:
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
