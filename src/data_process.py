@@ -6,6 +6,7 @@ import matplotlib.image as mpimg
 from paths_to_data import *
 from image_process import *
 from paths_to_data import *
+from mask_to_submission import *
 
 
 def load_image(infilename):
@@ -131,13 +132,18 @@ def save_results(patches, num_images, original_img_size):
         img = numpy2pillow(item.squeeze())
         pred = crop_prediction(img, original_img_size)
 
-        file_name = "{}.png".format(i)
+        file_name = "prediction{}.png".format(i+1)
         pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 
 
 
 def create_submission(submission_filename):
 
+    if not os.path.exists(SUBMISSION_PATH):
+        os.mkdir(SUBMISSION_PATH)
+    submission_filename = SUBMISSION_PATH + '/' + submission_filename 
     files = os.listdir(PREDICTED_IMAGES_PATH)
+
     images_name = list(filter(lambda x: x.endswith('.png'), files))
+
     masks_to_submission(submission_filename, images_name)

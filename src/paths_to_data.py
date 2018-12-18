@@ -7,5 +7,5 @@ TRAIN_FILTERED_IMAGES_PATH = FILE_PATH + "/../data/filteredImages/train"
 TEST_FOLDER_PATH = FILE_PATH + '/../data/test_set_images'
 VALIDATION_IMAGES_PATH = FILE_PATH + "/../data/validation/"
 PREDICTED_IMAGES_PATH = FILE_PATH + "/../data/prediction"
-
 LOGS_PATH = FILE_PATH + "/../logs"
+SUBMISSION_PATH = FILE_PATH + "/../submission"
