@@ -18,14 +18,13 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         log_writer.writerow(['input size', 'layers', 'number epochs',
-                             'step per epoch', 'batch_norm', 'accuracy',
+                             'step per epoch', 'accuracy',
                              'loss', 'validation accuracy',
                              'validation loss'])
         log_writer.writerow([str(in_size),
                              '[' + ' '.join(str(l) for l in layers) + ']',
                              str(epochs),
                              str(steps_per_epoch),
-                             batch_norm,
                              '[' + ' '.join("{:.6f}".format(l) for l in acc_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in loss_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_acc_list) + ']',
@@ -36,29 +35,29 @@ iter = 0
 epoch_step = 10
 if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
-layers_size = [16, 32, 64, 128]
+layers_size = [32, 64, 128, 256]
 
 
-for in_size in [40, 80, 160, 200, 320, 400]:
+for in_size in [160, 200, 400]:
 
     train_data_gen = train_generator(in_size)
     validation_data_gen = validation_generator(in_size)
     test_data_gen = test_generator(in_size)
 
-    for i in range(1, 5):
+    for i in range(1, 3):
 
-        layers = list(map(lambda x: (i+1)*x, layers_size))
+        layers = list(map(lambda x: (i)*x, layers_size))
 
-        for steps_per_epoch in range(100, 301, 200):
+        for steps_per_epoch in [300]:
             for unet_num in range(0, 2):
-                if unet_num == 0:
-                    model = unet(input_size=(in_size, in_size, 3),
-                                 layers=layers,
-                                 pretrained_weights=None)
-                else:
-                    model = unet2(input_size=(in_size, in_size, 3),
-                                  layers=layers,
-                                  pretrained_weights=None)
+                # if unet_num ==:
+                #    model = unet(input_size=(in_size, in_size, 3),
+                #                 layers=layers,
+                #                 pretrained_weights=None)
+                # else:
+                model = unet2(input_size=(in_size, in_size, 3),
+                              layers=layers,
+                              pretrained_weights=None)
 
                 Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
                                                        verbose=1, mode='auto',
