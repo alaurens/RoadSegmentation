@@ -7,94 +7,87 @@ from keras.optimizers import *
 from keras import backend as keras
 
 
-DROPOUT = 0.3
+DROPOUT = 0.5
 
 
 def up_block(input_layer, layer_size, concat_layer, batch_norm=True,
-             activation_layer=ReLU(), padding='same', kernel_init='he_normal'):
+             activation="relu", padding='same', kernel_init='he_normal'):
 
-    up = Conv2D(layer_size, 2, padding=padding,
+    up = Conv2D(layer_size, 2, activation=activation, padding=padding,
                 kernel_initializer=kernel_init)(UpSampling2D(size=(2, 2))(input_layer))
-    activation_layer(up)
 
     merge = concatenate([concat_layer, up], axis=3)
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(merge)
-    activation_layer(conv)
 
     if batch_norm:
         conv = BatchNormalization()(conv)
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
-    activation_layer(conv)
 
     return conv
 
 
 def down_block(input_layer, layer_size, dropout=0, batch_norm=True,
-               activation_layer=ReLU(), padding='same', kernel_init='he_normal'):
+               activation="relu", padding='same', kernel_init='he_normal'):
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(input_layer)
-    activation_layer(conv)
 
     if batch_norm:
         conv = BatchNormalization()(conv)
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
-    activation_layer(conv)
 
     if not dropout == 0:
-        conv = Dropout(dropout)(conv)
+        conv = Dropout(0.5)(conv)
 
     pool = MaxPooling2D(pool_size=(2, 2))(conv)
     return pool, conv
 
 
 def straight_block(input_layer, layer_size, dropout=0, batch_norm=True,
-                   activation_layer=ReLU(), padding='same', kernel_init='he_normal'):
+                   activation="relu", padding='same', kernel_init='he_normal'):
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(input_layer)
-    activation_layer(conv)
 
     if batch_norm:
         conv = BatchNormalization()(conv)
 
-    conv = Conv2D(layer_size, 3, padding=padding,
+    conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
-    activation_layer(conv)
 
     if not dropout == 0:
-        conv = Dropout(dropout)(conv)
+        conv = Dropout(0.5)(conv)
 
     return conv
 
 
 def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=None):
-    activation = ReLU()
+
     inputs = Input(input_size)
 
-    pool1, conv1 = down_block(inputs, layers[0], activation_layer=activation)
+    pool1, conv1 = down_block(inputs, layers[0])
 
-    pool2, conv2 = down_block(pool1, layers[1], activation_layer=activation)
+    pool2, conv2 = down_block(pool1, layers[1])
 
-    pool3, conv3 = down_block(pool2, layers[2], dropout=0, activation_layer=activation)
+    pool3, conv3 = down_block(pool2, layers[2], dropout=0)
+    drop3 = Dropout(0.5)(conv3)
+    conv4 = straight_block(pool3, layers[3], dropout=DROPOUT)
 
-    conv4 = straight_block(pool3, layers[3], dropout=DROPOUT, activation_layer=activation)
+    conv5 = up_block(conv4, layers[2], drop3)
 
-    conv5 = up_block(conv4, layers[2], conv3, activation_layer=activation)
+    conv6 = up_block(conv5, layers[1], conv2)
 
-    conv6 = up_block(conv5, layers[1], conv2, activation_layer=activation)
-
-    conv7 = up_block(conv6, layers[0], conv1, activation_layer=activation)
+    conv7 = up_block(conv6, layers[0], conv1)
 
     conv8 = Conv2D(1, 1, activation='sigmoid')(conv7)
 
-    model = Model(inputs=inputs, outputs=conv8)
+    model = Model(inputs=inputs, outputs=conv)
 
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
@@ -153,7 +146,7 @@ def unet2(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights
 
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
-    # model.summary()
+    model.summary()
 
     if(pretrained_weights):
         model.load_weights(pretrained_weights)
