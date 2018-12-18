@@ -48,7 +48,7 @@ def down_block(input_layer, layer_size, dropout=0, batch_norm=True,
     activation_layer(conv)
 
     if not dropout == 0:
-        conv = Dropout(0.5)(conv)
+        conv = Dropout(dropout)(conv)
 
     pool = MaxPooling2D(pool_size=(2, 2))(conv)
     return pool, conv
@@ -69,13 +69,13 @@ def straight_block(input_layer, layer_size, dropout=0, batch_norm=True,
     activation_layer(conv)
 
     if not dropout == 0:
-        conv = Dropout(0.5)(conv)
+        conv = Dropout(dropout)(conv)
 
     return conv
 
 
 def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=None):
-    activation = ELU(alpha=1.0)
+    activation = ReLU(alpha=1.0)
     inputs = Input(input_size)
 
     pool1, conv1 = down_block(inputs, layers[0], activation_layer=activation)
