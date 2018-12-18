@@ -48,7 +48,7 @@ for in_size in [40, 80, 160, 200, 320, 400]:
 
         layers = list(map(lambda x: (i+1)*x, layers_size))
 
-        for steps_per_epoch in range(100, 701, 200):
+        for steps_per_epoch in range(100, 301, 200):
             for unet_num in range(0, 2):
                 if unet_num == 0:
                     model = unet(input_size=(in_size, in_size, 3),
@@ -66,7 +66,7 @@ for in_size in [40, 80, 160, 200, 320, 400]:
                                                verbose=1, mode='auto',
                                                baseline=None, restore_best_weights=False)
                 last_epoch = 0
-                for epochs in range(1, 7+1):
+                for epochs in range(1, 7):
 
                     iter = iter+1
                     init_epoch = last_epoch
@@ -80,7 +80,8 @@ for in_size in [40, 80, 160, 200, 320, 400]:
                                         epochs=last_epoch, initial_epoch=init_epoch,
                                         callbacks=[Learning_reduction, history,
                                                    Early_Stopping, model_checkpoint],
-                                        validation_steps=20, validation_data=validation_data_gen)
+                                        validation_steps=20, validation_data=validation_data_gen,
+                                        use_multiprocessing=True)
 
                     hist = history.history
                     log_info(iter, in_size, layers, last_epoch, steps_per_epoch,
