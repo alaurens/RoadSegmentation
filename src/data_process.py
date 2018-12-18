@@ -134,6 +134,7 @@ def save_results(patches, num_images, original_img_size):
         pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 
 
+
 def create_submission(submission_filename):
 
     files = os.listdir(PREDICTED_IMAGES_PATH)
