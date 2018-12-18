@@ -75,7 +75,7 @@ def straight_block(input_layer, layer_size, dropout=0, batch_norm=True,
 
 
 def unet(input_size=(400, 400, 3), layers=[16, 32, 64, 128], pretrained_weights=None):
-    activation = ReLU(alpha=1.0)
+    activation = ReLU()
     inputs = Input(input_size)
 
     pool1, conv1 = down_block(inputs, layers[0], activation_layer=activation)
