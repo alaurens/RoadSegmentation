@@ -6,18 +6,19 @@ import h5py
 
 num_test_imgs = 50
 original_image_size = 608
-weights = WEIGHTS_PATH + '/' + '2weights48.hdf5'
-patch_dim = 400
+weight_name = '2weights18'
+weights = WEIGHTS_PATH + '/' + weight_name + '.hdf5'
+patch_dim = 200
 channels = 3
 
 layers = [64, 128, 256, 512]
 
 test_data_gen = test_generator(patch_dim, num_test_imgs)
 
-model = unet2(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights=weights)
+model = unet(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights=weights)
 
 prediction = model.predict_generator(test_data_gen, num_test_imgs, verbose=1)
 
 save_results(prediction, num_test_imgs, original_image_size)
 
-create_submission('test.csv')
+create_submission(weight_name + '.csv')
