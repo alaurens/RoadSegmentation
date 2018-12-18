@@ -36,7 +36,7 @@ def combine_all_logs():
     fout.close()
 
 
-def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
+def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
              val_acc_list, loss_list, val_loss_list):
     if not os.path.exists(LOGS_PATH):
         os.mkdir(LOGS_PATH)

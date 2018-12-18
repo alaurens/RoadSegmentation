@@ -23,7 +23,7 @@ for in_size in [200, 400]:
     for i in [1, 2]:
         layers = list(map(lambda x: i*x, layers_size))
 
-        model = unet2(input_size=(in_size, in_size, 3), layers=layers)
+        model = unet(input_size=(in_size, in_size, 3), layers=layers)
 
         Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
                                                verbose=1, mode='auto',
@@ -51,5 +51,5 @@ for in_size in [200, 400]:
 
             hist = history.history
             log_info(iter, in_size, layers, last_epoch, steps_per_epoch,
-                     unet_num, hist['acc'], hist['val_acc'],
+                     hist['acc'], hist['val_acc'],
                      hist['loss'], hist['val_loss'])
