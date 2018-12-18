@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from model import *
 from data_process import *
 from generator import *
