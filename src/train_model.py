@@ -18,13 +18,14 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         log_writer.writerow(['input size', 'layers', 'number epochs',
-                             'step per epoch', 'accuracy',
+                             'step per epoch', 'batch_norm', 'accuracy',
                              'loss', 'validation accuracy',
                              'validation loss'])
         log_writer.writerow([str(in_size),
                              '[' + ' '.join(str(l) for l in layers) + ']',
                              str(epochs),
                              str(steps_per_epoch),
+                             batch_norm,
                              '[' + ' '.join("{:.6f}".format(l) for l in acc_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in loss_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_acc_list) + ']',

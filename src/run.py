@@ -4,20 +4,20 @@ from generator import *
 from data_process import *
 import h5py
 
-num_test_imgs = 3
+num_test_imgs = 50
 original_image_size = 608
+weights = WEIGHTS_PATH + '/' + 'weights144.hdf5'
+patch_dim = 80
+channels = 3
 
-patch_dim=400
-channels=3
+layers = [48, 96, 192, 384]
 
-layers=[16, 32, 64, 128]
+test_data_gen = test_generator(patch_dim, num_test_imgs)
 
-test_data_gen = test_generator(patch_dim)
+model = unet2(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights=weights)
 
-model = unet(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights='weights.hdf5')
+prediction = model.predict_generator(test_data_gen, num_test_imgs, verbose=1)
 
-prediction = model.predict_generator(test_data_gen,num_test_imgs,verbose = 1)
-
-save_results(prediction,num_test_imgs,original_image_size)
+save_results(prediction, num_test_imgs, original_image_size)
 
 create_submission('test.csv')

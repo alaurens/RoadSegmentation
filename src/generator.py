@@ -86,15 +86,12 @@ def validation_generator(patch_dim):
 
 
 @threadsafe_generator
-def test_generator(patch_dim):
+def test_generator(patch_dim, num_test):
 
-    images_name = os.listdir(TEST_FOLDER_PATH)
-    pattern = re.compile('test_[0-9]+')
-    for file in images_name:
-        if not pattern.match(file):
-            continue
+    file_name = 'test_'
+    for i in range(1, num_test+1):
 
-        img = Image.open(TEST_FOLDER_PATH + "/" + file + '/' + file + '.png')
+        img = Image.open(TEST_FOLDER_PATH + "/" + file_name + str(i) + '/' + file_name + str(i) + '.png')
 
         np_img = pillow2numpy(img)
 

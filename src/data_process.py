@@ -49,7 +49,6 @@ def resize_test_image(test_image, patch_dim):
 
 
 def reconstruct_images(patches, num_images):
-  
 
     num_patches = patches.shape[0]
     patches_per_img = int(num_patches / num_images)
@@ -58,24 +57,23 @@ def reconstruct_images(patches, num_images):
 
     width = patches.shape[2] * patches_per_side
     num_channels = patches.shape[3]
-   
-    for _ in range(num_images):
+
+    for i in range(num_images):
         b = np.empty((0, width, num_channels))
-        for i in range(0, patches_per_img, patches_per_side):
-            tmp = np.concatenate((patches[i:i+patches_per_side]), axis=1)
+        for j in range(i*patches_per_img, (i+1)*patches_per_img, patches_per_side):
+            tmp = np.concatenate((patches[j:j+patches_per_side]), axis=1)
             b = np.concatenate((b, tmp), axis=0)
-        images.append(b)
+        images.append(b.copy())
     return images
-    
 
 
 def crop_prediction(image, original_img_size):
-    
+
     shape = image.size[0]
     border_i = (shape - original_img_size)/2
-    border_f =   border_i + original_img_size
-    cropped_image = image.crop((border_i,border_i,border_f,border_f))
-    
+    border_f = border_i + original_img_size
+    cropped_image = image.crop((border_i, border_i, border_f, border_f))
+
     return cropped_image
 
 
@@ -120,13 +118,14 @@ def get_patches(np_img, patch_dim):
 
     return patches
 
+
 def save_results(patches, num_images, original_img_size):
 
     if not os.path.exists(PREDICTED_IMAGES_PATH):
         os.mkdir(PREDICTED_IMAGES_PATH)
-        
+
     image = reconstruct_images(patches, num_images)
-        
+
     for i, item in enumerate(image):
 
         img = numpy2pillow(item.squeeze())
@@ -136,12 +135,11 @@ def save_results(patches, num_images, original_img_size):
         pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 
 
-
 def create_submission(submission_filename):
 
     if not os.path.exists(SUBMISSION_PATH):
         os.mkdir(SUBMISSION_PATH)
-    submission_filename = SUBMISSION_PATH + '/' + submission_filename 
+    submission_filename = SUBMISSION_PATH + '/' + submission_filename
     files = os.listdir(PREDICTED_IMAGES_PATH)
 
     images_name = list(filter(lambda x: x.endswith('.png'), files))
