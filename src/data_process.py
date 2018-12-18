@@ -130,6 +130,7 @@ def save_results(patches, num_images, original_img_size):
 
         img = numpy2pillow(item.squeeze())
         pred = crop_prediction(img, original_img_size)
+
         file_name = "{}.png".format(i)
         pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 

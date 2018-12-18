@@ -2,11 +2,38 @@ import numpy as np
 import math
 import re
 import os
+import threading
 from paths_to_data import *
 from image_process import *
 from data_process import *
 
 
+class threadsafe_iter:
+    """Takes an iterator/generator and makes it thread-safe by
+    serializing call to the `next` method of given iterator/generator.
+    """
+
+    def __init__(self, it):
+        self.it = it
+        self.lock = threading.Lock()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        with self.lock:
+            return self.it.__next__()
+
+
+def threadsafe_generator(f):
+    """A decorator that takes a generator function and makes it thread-safe.
+    """
+    def g(*a, **kw):
+        return threadsafe_iter(f(*a, **kw))
+    return g
+
+
+@threadsafe_generator
 def train_generator(patch_dim):
 
     images_name = os.listdir(TRAIN_IMAGES_PATH)
@@ -35,6 +62,7 @@ def train_generator(patch_dim):
         yield batch_img, batch_mask
 
 
+@threadsafe_generator
 def validation_generator(patch_dim):
 
     images_name = os.listdir(VALIDATION_IMAGES_PATH)
@@ -57,6 +85,7 @@ def validation_generator(patch_dim):
             yield batch_img, batch_mask
 
 
+@threadsafe_generator
 def test_generator(patch_dim):
 
     images_name = os.listdir(TEST_FOLDER_PATH)
@@ -68,8 +97,6 @@ def test_generator(patch_dim):
         img = Image.open(TEST_FOLDER_PATH + "/" + file + '/' + file + '.png')
 
         np_img = pillow2numpy(img)
-        # add axis dimension 3 in order to test on neural net
-        np_img = np.expand_dims(np_img, axis=3)
 
         np_img = resize_test_image(np_img, patch_dim)
 

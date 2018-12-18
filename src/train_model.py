@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from model import *
 from data_process import *
 from generator import *
@@ -49,7 +48,7 @@ for in_size in [40, 80, 160, 200, 320, 400]:
 
         layers = list(map(lambda x: (i+1)*x, layers_size))
 
-        for steps_per_epoch in range(1, 701, 200):
+        for steps_per_epoch in range(100, 701, 200):
             for unet_num in range(0, 2):
                 if unet_num == 0:
                     model = unet(input_size=(in_size, in_size, 3),
