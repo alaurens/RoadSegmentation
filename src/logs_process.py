@@ -1,5 +1,6 @@
 import csv
 import ast
+import os
 from paths_to_data import LOGS_PATH
 
 
