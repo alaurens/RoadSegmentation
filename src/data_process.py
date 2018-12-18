@@ -5,6 +5,8 @@ import math
 import matplotlib.image as mpimg
 from paths_to_data import *
 from image_process import *
+from paths_to_data import *
+from mask_to_submission import *
 
 
 def load_image(infilename):
@@ -47,6 +49,7 @@ def resize_test_image(test_image, patch_dim):
 
 
 def reconstruct_images(patches, num_images):
+  
 
     num_patches = patches.shape[0]
     patches_per_img = int(num_patches / num_images)
@@ -55,15 +58,25 @@ def reconstruct_images(patches, num_images):
 
     width = patches.shape[2] * patches_per_side
     num_channels = patches.shape[3]
-
+   
     for _ in range(num_images):
         b = np.empty((0, width, num_channels))
         for i in range(0, patches_per_img, patches_per_side):
-            tmp = np.concatenate((patches[i:i+4]), axis=1)
+            tmp = np.concatenate((patches[i:i+patches_per_side]), axis=1)
             b = np.concatenate((b, tmp), axis=0)
-
         images.append(b)
     return images
+    
+
+
+def crop_prediction(image, original_img_size):
+    
+    shape = image.size[0]
+    border_i = (shape - original_img_size)/2
+    border_f =   border_i + original_img_size
+    cropped_image = image.crop((border_i,border_i,border_f,border_f))
+    
+    return cropped_image
 
 
 def relabel(img):
@@ -107,22 +120,30 @@ def get_patches(np_img, patch_dim):
 
     return patches
 
-
-def save_results(files_to_save):
+def save_results(patches, num_images, original_img_size):
 
     if not os.path.exists(PREDICTED_IMAGES_PATH):
         os.mkdir(PREDICTED_IMAGES_PATH)
-    for i, item in enumerate(files_to_save):
+        
+    image = reconstruct_images(patches, num_images)
+        
+    for i, item in enumerate(image):
 
-        print(item.shape)
+        img = numpy2pillow(item.squeeze())
+        pred = crop_prediction(img, original_img_size)
 
-        img = ip.numpy2pillow(item.squeeze())
-        file_name = "{}.png".format(i)
-        img.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
+        file_name = "prediction{}.png".format(i+1)
+        pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
+
 
 
 def create_submission(submission_filename):
 
+    if not os.path.exists(SUBMISSION_PATH):
+        os.mkdir(SUBMISSION_PATH)
+    submission_filename = SUBMISSION_PATH + '/' + submission_filename 
     files = os.listdir(PREDICTED_IMAGES_PATH)
+
     images_name = list(filter(lambda x: x.endswith('.png'), files))
+
     masks_to_submission(submission_filename, images_name)
