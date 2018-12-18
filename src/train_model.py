@@ -14,7 +14,7 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
         batch_norm = "batch norm"
     else:
         batch_norm = "not batch norm"
-    with open(LOGS_PATH + '/log' + str(iter) + '.csv', mode='w') as log_file:
+    with open(LOGS_PATH + '/2log' + str(iter) + '.csv', mode='w') as log_file:
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         log_writer.writerow(['input size', 'layers', 'number epochs',
@@ -73,7 +73,7 @@ for in_size in [160, 200, 400]:
                     last_epoch = epoch_step*epochs
 
                     history = History()
-                    model_checkpoint = ModelCheckpoint(LOGS_PATH + '/weights' + str(iter) + '.hdf5',
+                    model_checkpoint = ModelCheckpoint(LOGS_PATH + '/2weights' + str(iter) + '.hdf5',
                                                        monitor='val_acc', verbose=1, save_best_only=True)
 
                     model.fit_generator(train_data_gen, steps_per_epoch=steps_per_epoch,
