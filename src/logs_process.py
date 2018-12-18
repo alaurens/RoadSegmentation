@@ -56,6 +56,3 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
                              '[' + ' '.join("{:.6f}".format(l) for l in loss_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_acc_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_loss_list) + ']'])
-
-
-combine_all_logs()
