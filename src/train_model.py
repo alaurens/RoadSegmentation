@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from model import *
 from data_process import *
 from generator import *
@@ -14,7 +15,7 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, unet_num, acc_list,
         batch_norm = "batch norm"
     else:
         batch_norm = "not batch norm"
-    with open(LOGS_PATH + '/log' + str(i) + '.csv', mode='w') as log_file:
+    with open(LOGS_PATH + '/log' + str(iter) + '.csv', mode='w') as log_file:
         log_writer = csv.writer(log_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         log_writer.writerow(['input size', 'layers', 'number epochs',
