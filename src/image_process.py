@@ -32,7 +32,7 @@ def add_noise(image, type="s&p"):
     w, h = image.size
 
     if type == "s&p":
-        salt = np.random.randint(200, 400)
+        salt = np.random.randint(100, 400)
         noise = np.random.randint(salt+1, size=(h, w))
 
         idx_salt = noise == salt
@@ -46,8 +46,8 @@ def add_noise(image, type="s&p"):
 
     if type == "gauss":
         c = len(image.getbands())
-        mean = np.random.randint(-1, 2)
-        std = np.random.randint(4)
+        mean = np.random.randint(-4, 5)
+        std = np.random.randint(5)
         noise = np.random.normal(mean, std, (h, w, c))
         return Image.fromarray(np.uint8(np.array(image) + noise))
 
