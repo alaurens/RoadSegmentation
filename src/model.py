@@ -7,7 +7,7 @@ from keras.optimizers import *
 from keras import backend as keras
 
 
-DROPOUT = 0.1
+DROPOUT = 0
 
 
 def up_block(input_layer, layer_size, concat_layer, batch_norm=True,
@@ -27,6 +27,9 @@ def up_block(input_layer, layer_size, concat_layer, batch_norm=True,
     conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
 
+    if batch_norm:
+        conv = BatchNormalization()(conv)
+
     return conv
 
 
@@ -42,8 +45,11 @@ def down_block(input_layer, layer_size, dropout=0, batch_norm=True,
     conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
 
+    if batch_norm:
+        conv = BatchNormalization()(conv)
+
     if not dropout == 0:
-        conv = Dropout(0.5)(conv)
+        conv = Dropout(dropout)(conv)
 
     pool = MaxPooling2D(pool_size=(2, 2))(conv)
     return pool, conv
@@ -61,8 +67,11 @@ def straight_block(input_layer, layer_size, dropout=0, batch_norm=True,
     conv = Conv2D(layer_size, 3, activation=activation, padding=padding,
                   kernel_initializer=kernel_init)(conv)
 
+    if batch_norm:
+        conv = BatchNormalization()(conv)
+
     if not dropout == 0:
-        conv = Dropout(0.5)(conv)
+        conv = Dropout(dropout)(conv)
 
     return conv
 
