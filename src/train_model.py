@@ -8,8 +8,9 @@ from logs_process import log_info
 
 
 iter = 276
-epoch_step = 1
-steps_per_epoch = 1
+epoch_step = 10
+steps_per_epoch = 300
+num_epoch = 100
 
 if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
@@ -42,7 +43,7 @@ for in_size in in_sizes:
                                    verbose=1, mode='auto', baseline=None,
                                    restore_best_weights=False)
     last_epoch = 0
-    for epochs in range(1, 10):
+    for epochs in range(1, int(num_epoch/steps_per_epoch) + 1):
 
         iter = iter+1
         init_epoch = last_epoch
