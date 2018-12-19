@@ -6,7 +6,7 @@ import h5py
 
 num_test_imgs = 50
 original_image_size = 608
-weight_name = 'weights296'
+weight_name = 'weights298'
 weights = WEIGHTS_PATH + '/' + weight_name + '.hdf5'
 patch_dim = 400
 channels = 3
