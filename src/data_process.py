@@ -95,10 +95,13 @@ def relabel(img):
     np_img = pillow2numpy(img)
     max = np.max(np_img)
 
+
     # Sets pixels to 0 if their value are smaller or equal to 90% of the maximum pixel value,
     #else sets them to 1
-    np_img[np_img <= (max*0.9)] = 0
-    np_img[np_img > (max*0.9)] = 1
+    threshold = 0.6
+    np_img[np_img <= (max*threshold)] = 0
+    np_img[np_img > (max*threshold)] = 1
+
 
     return numpy2pillow(np_img)
 

@@ -158,6 +158,21 @@ def rotate_with_extension(image, alpha):
     return rotate.crop((h, h, h + size, h+size))
 
 
+def shift_with_extension(image, shift):
+
+    image_size = image.size[0]
+    x, y = shift
+    max_shift = max(abs(x), abs(y))
+    extend = mirror_extend(max_shift, image)
+
+    left = max_shift + y
+    right = left + image_size
+    upper = max_shift + x
+    lower = upper + image_size
+
+    return extend.crop((left, upper, right, lower))
+
+
 def generate_filtered_images():
 
     images = os.listdir(TRAIN_IMAGES_PATH)
@@ -181,11 +196,17 @@ def img_float_to_uint8(img):
 def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
     size = image.size[0]
+    modify_num = np.random.randint(3)
 
-    rand_rotate = np.random.randint(90)
+    if modify_num == 1:  # rotate
+        rand_rotate = np.random.randint(90)
+        image = rotate_with_extension(image, rand_rotate)
+        groundtruth = rotate_with_extension(groundtruth, rand_rotate)
 
-    image = rotate_with_extension(image, rand_rotate)
-    groundtruth = rotate_with_extension(groundtruth, rand_rotate)
+    if modify_num == 2:
+        shift = np.random.randint(-200, 201, size=2)
+        image = shift_with_extension(image, shift)
+        groundtruth = shift_with_extension(groundtruth, shift)
 
     if noise:
         noises = ["s&p", "gauss"]

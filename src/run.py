@@ -6,16 +6,15 @@ import h5py
 
 num_test_imgs = 50
 original_image_size = 608
-weight_name = '2weights18'
+weight_name = 'weights296'
 weights = WEIGHTS_PATH + '/' + weight_name + '.hdf5'
-patch_dim = 200
+patch_dim = 400
 channels = 3
-
-layers = [64, 128, 256, 512]
+layers = [128, 256, 512, 1024]
 
 test_data_gen = test_generator(patch_dim, num_test_imgs)
 
-model = unet(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights=weights)
+model = unet1(input_size=(patch_dim, patch_dim, channels), layers=layers, pretrained_weights=weights)
 
 prediction = model.predict_generator(test_data_gen, num_test_imgs, verbose=1)
 
