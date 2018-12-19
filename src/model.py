@@ -41,7 +41,10 @@ def unet1(input_size=(400, 400, 3), layers=[16, 32, 64, 128],
 
 
 def unet2(input_size=(320, 320, 3), layers=[64]*5, activation='relu', pretrained_weights=None):
-
+    """ 
+    The following unet is copied from the structure proposed by the following website:
+    https://deepsense.ai/deep-learning-for-satellite-imagery-via-image-segmentation/
+    """
     inputs = Input(input_size)
 
     pool, concat_conv1 = down_block2(inputs, layers[0], first=True)

@@ -10,47 +10,46 @@ from mask_to_submission import *
 
 
 def load_image(infilename):
+    """
+    Loads an image from a specific file to the numpy format
+    """
     data = mpimg.imread(infilename)
     return data
 
 
-def load_image_train():
-
-    files = os.listdir(TRAIN_IMAGES_PATH)
-    n = len(files)
-    #print("Loading " + str(n) + " images")
-    imgs = np.asarray([load_image(TRAIN_IMAGES_PATH + files[i])
-                       for i in range(n) if 'png' in files[i]])
-    # print(np.shape(imgs))
-    #print("Loading " + str(n) + " images")
-    groundtruth_imgs = np.asarray([load_image(GROUNDTRUTH_PATH + files[i])
-                                   for i in range(n) if 'png' in files[i]])
-    a3d = np.expand_dims(groundtruth_imgs, axis=3)
-    # print(np.shape(a3d))
-
-    return imgs, a3d
-
-
 def resize_image(np_image, patch_dim):
+    """
+    Resizes an image such that the final image size is a multiple of the patch size
+    """
 
+    # Adds an other dimension for images with one channel
     if len(np_image.shape) == 2:
         np_image = np.expand_dims(np_image, axis=3)
 
+    # If the image size is already a multiple of the patch size the image size is not changed
     if np.size(np_image, 0) % patch_dim == 0:
         return np_image
 
     else:
         np_image = numpy2pillow(np_image)
-        add_pixel = patch_dim*(np.floor(np.size(np_image, 0) /
-                                        patch_dim)+1) - np.size(np_image, 0)
+
+        nb_patch = int(np.size(np_image, 0) / patch_dim) + 1
+
+        # Adds a precise number of pixel in each border using mirror extension
+        add_pixel = patch_dim * nb_patch - np.size(np_image, 0)
         np_image = mirror_extend(add_pixel/2, np_image)
+
         np_image = pillow2numpy(np_image)
 
         return np_image
 
 
 def reconstruct_images(patches, num_images):
+    """
+    Reconstructs images from patches
+    """
 
+    # Computes the dimension of the original images
     num_patches = patches.shape[0]
     patches_per_img = int(num_patches / num_images)
     patches_per_side = int(math.sqrt(patches_per_img))
@@ -59,6 +58,7 @@ def reconstruct_images(patches, num_images):
     width = patches.shape[2] * patches_per_side
     num_channels = patches.shape[3]
 
+    # Patches are concatenated by line and then by column to reconstruct each images
     for i in range(num_images):
         b = np.empty((0, width, num_channels))
         for j in range(i*patches_per_img, (i+1)*patches_per_img, patches_per_side):
@@ -69,19 +69,33 @@ def reconstruct_images(patches, num_images):
 
 
 def crop_prediction(image, original_img_size):
+    """
+    Crops a prediction image to give it the same size as the test image use for prediction
+    """
 
+    # Computes the intial and final index of pixel to keep
     shape = image.size[0]
     border_i = (shape - original_img_size)/2
     border_f = border_i + original_img_size
+
+    # Crops the image according to the previsous index
     cropped_image = image.crop((border_i, border_i, border_f, border_f))
 
     return cropped_image
 
 
 def relabel(img):
+    """
+    Transform a mask into black-white images by attributing to each pixel label 0 and 1 according to a
+    specific threshold
+    """
 
+    # Converts the image in a numpy array and takes the maximum pixel value of this array
     np_img = pillow2numpy(img)
     max = np.max(np_img)
+
+    # Sets pixels to 0 if their value are smaller or equal to 90% of the maximum pixel value,
+    # else sets them to 1
     threshold = 0.6
     np_img[np_img <= (max*threshold)] = 0
     np_img[np_img > (max*threshold)] = 1
@@ -90,59 +104,86 @@ def relabel(img):
 
 
 def relabel_all_images():
+    """
+    Transforms all the mask into black-white images using the previsous relabel function
+    """
 
+    # Creates a list of all files constituting the folder of groundtruth images
     label_imgs = os.listdir(GROUNDTRUTH_PATH)
 
+    # Creates a folder to stock relabeled images in case the folder already doesn't exist
     if not os.path.exists(RELABELED_PATH):
         os.mkdir(RELABELED_PATH)
 
+    # Relabels all image of the list and save them in the appropriate folder
     for img_name in label_imgs:
         img = Image.open(GROUNDTRUTH_PATH + '/' + img_name)
         relabel(img).save(RELABELED_PATH + '/' + img_name, "PNG")
 
 
 def get_patches(np_img, patch_dim):
+    """
+    Cuts the image in small patches
+    """
 
+    # Adds an other dimension for images with one channel
     if len(np_img.shape) == 2:
         np_img = np.expand_dims(np_img, axis=3)
 
     size, _, num_channels = np_img.shape
-
     dim = (0, patch_dim, patch_dim, num_channels)
     patches = []
+
+    # Cuts the image into patches of size patch_dim
     for i in range(0, size, patch_dim):
         for j in range(0, size, patch_dim):
             patch = np_img[i:i+patch_dim, j:j+patch_dim, :]
             patches.append(patch)
 
+    # Stores all patches in an array
     patches = np.asarray(patches)
 
     return patches
 
 
 def save_results(patches, num_images, original_img_size):
+    """
+    Saves in a folder images of prediction after reconstruction and crop
+    """
 
+    # Creates a folder to stock predicted images in case the folder already doesn't exist
     if not os.path.exists(PREDICTED_IMAGES_PATH):
         os.mkdir(PREDICTED_IMAGES_PATH)
 
+    # Reconstructs prediction images from patches
     image = reconstruct_images(patches, num_images)
 
+    # Crops prediction images to give them the same size than their satellite images
     for i, item in enumerate(image):
 
         img = numpy2pillow(item.squeeze())
         pred = crop_prediction(img, original_img_size)
 
+        # Save prediction images in the folder in PNG format
         file_name = "prediction{}.png".format(i+1)
         pred.save(PREDICTED_IMAGES_PATH + "/" + file_name, "PNG")
 
 
 def create_submission(submission_filename):
+    """
+    Converts the prediction images into csv files containing only 0 and 1 values for submission
+    """
 
+    # Creates a folder to stock csv submission in case the folder already doesn't exist
     if not os.path.exists(SUBMISSION_PATH):
         os.mkdir(SUBMISSION_PATH)
+
+    # Creates a list of all files constituting the folder of prediction images
     submission_filename = SUBMISSION_PATH + '/' + submission_filename
     files = os.listdir(PREDICTED_IMAGES_PATH)
 
+    # Applies a filter to only select .png files
     images_name = list(filter(lambda x: x.endswith('.png'), files))
 
+    # Converts the prediction images into csv files
     masks_to_submission(submission_filename, images_name)
