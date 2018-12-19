@@ -220,7 +220,7 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
         return lambda image: ImageOps.mirror(image)
 
     augmentations_one_of = [rotate_augmentation, shift_augmentation]
-    augmentations_any_of = [zoom_augmentation, flip_augmentation, mirror_augmentation]
+    augmentations_any_of = [flip_augmentation, mirror_augmentation]
 
     idx = np.random.randint(len(augmentations_one_of) + 1)
     if not idx == 0:
@@ -238,15 +238,6 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
         noise_rand = np.random.randint(num_noises + 1)
         if noise_rand < num_noises:
             image = add_noise(image, type=noises[noise_rand])
-
-    if flip:
-        rand_flip = np.random.randint(3)
-        if rand_flip == 1:
-            image = ImageOps.flip(image)
-            groundtruth = ImageOps.flip(groundtruth)
-        if rand_flip == 2:
-            image = ImageOps.mirror(image)
-            groundtruth = ImageOps.mirror(groundtruth)
 
     return (image, groundtruth)
 
