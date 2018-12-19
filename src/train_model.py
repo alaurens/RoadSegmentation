@@ -17,13 +17,13 @@ if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 
 
-#model_num = 1
-#layers = [128, 256, 512, 1024]
-#in_sizes = [400]
+model_num = 1
+layers = [128, 256, 512, 1024]
+in_sizes = [400]
 
-model_num = 2
-layers = [64]*5
-in_sizes = [160, 320]
+#model_num = 2
+#layers = [64]*5
+#in_sizes = [160, 320]
 
 
 activation = 'relu'
