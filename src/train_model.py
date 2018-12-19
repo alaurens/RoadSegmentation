@@ -10,7 +10,7 @@ from logs_process import log_info
 iter = 286
 relabel_mask = False
 epoch_step = 10
-steps_per_epoch = 300
+steps_per_epoch = 400
 num_epoch = 100
 
 if not os.path.exists(LOGS_PATH):
