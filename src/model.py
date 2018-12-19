@@ -32,7 +32,7 @@ def unet1(input_size=(400, 400, 3), layers=[16, 32, 64, 128],
 
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
-    model.summary()
+    # model.summary()
 
     if(pretrained_weights):
         model.load_weights(pretrained_weights)
@@ -68,7 +68,7 @@ def unet2(input_size=(320, 320, 3), layers=[64]*5, activation='relu', pretrained
 
     model = Model(inputs, outputs)
 
-    model.summary()
+    # model.summary()
 
     if(pretrained_weights):
         model.load_weights(pretrained_weights)
