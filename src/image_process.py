@@ -206,7 +206,7 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
         return lambda image: shift_with_extension(image, shift)
 
     def zoom_augmentation():
-        x_len, y_len = np.random.randint(200, 350, size=2)
+        x_len, y_len = np.random.randint(250, 350, size=2)
         left = np.random.randint(x_size-x_len)
         upper = np.random.randint(y_size-y_len)
         right, lower = left + x_len, upper+y_len
@@ -219,10 +219,15 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
     def mirror_augmentation():
         return lambda image: ImageOps.mirror(image)
 
-    augmentations = [rotate_augmentation, shift_augmentation, zoom_augmentation,
-                     flip_augmentation, mirror_augmentation]
+    augmentations_one_of = [rotate_augmentation, shift_augmentation]
+    augmentations_any_of = [zoom_augmentation, flip_augmentation, mirror_augmentation]
 
-    for augmentation in augmentations:
+    idx = np.random.randint(len(augmentations_one_of) + 1)
+    if not idx == 0:
+        image = augmentations_one_of[idx-1]()(image)
+        groundtruth = augmentations_one_of[idx-1]()(groundtruth)
+
+    for augmentation in augmentations_any_of:
         if np.random.randint(2) == 1:
             image = augmentation()(image)
             groundtruth = augmentation()(groundtruth)
