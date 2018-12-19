@@ -11,7 +11,7 @@ from mask_to_submission import *
 
 def load_image(infilename):
     """
-    Loads an image from a specific file
+    Loads an image from a specific file to the numpy format
     """
     data = mpimg.imread(infilename)
     return data
@@ -26,7 +26,6 @@ def resize_image(np_image, patch_dim):
     if len(np_image.shape) == 2:
         np_image = np.expand_dims(np_image, axis=3)
 
-
     # If the image size is already a multiple of the patch size the image size is not changed
     if np.size(np_image, 0) % patch_dim == 0:
         return np_image
@@ -36,7 +35,7 @@ def resize_image(np_image, patch_dim):
 
         nb_patch = int(np.size(np_image, 0) / patch_dim) + 1
 
-        # Adds a precise number of pixel in each border using mirror extension 
+        # Adds a precise number of pixel in each border using mirror extension
         add_pixel = patch_dim * nb_patch - np.size(np_image, 0)
         np_image = mirror_extend(add_pixel/2, np_image)
 
@@ -79,7 +78,7 @@ def crop_prediction(image, original_img_size):
     border_i = (shape - original_img_size)/2
     border_f = border_i + original_img_size
 
-    #Crops the image according to the previsous index
+    # Crops the image according to the previsous index
     cropped_image = image.crop((border_i, border_i, border_f, border_f))
 
     return cropped_image
@@ -87,7 +86,7 @@ def crop_prediction(image, original_img_size):
 
 def relabel(img):
     """
-    Transform a mask into black-white images by attributing to each pixel label 0 and 1 according to a 
+    Transform a mask into black-white images by attributing to each pixel label 0 and 1 according to a
     specific threshold
     """
 
@@ -95,13 +94,11 @@ def relabel(img):
     np_img = pillow2numpy(img)
     max = np.max(np_img)
 
-
     # Sets pixels to 0 if their value are smaller or equal to 90% of the maximum pixel value,
-    #else sets them to 1
+    # else sets them to 1
     threshold = 0.6
     np_img[np_img <= (max*threshold)] = 0
     np_img[np_img > (max*threshold)] = 1
-
 
     return numpy2pillow(np_img)
 
@@ -181,7 +178,7 @@ def create_submission(submission_filename):
     if not os.path.exists(SUBMISSION_PATH):
         os.mkdir(SUBMISSION_PATH)
 
-    # Creates a list of all files constituting the folder of prediction images 
+    # Creates a list of all files constituting the folder of prediction images
     submission_filename = SUBMISSION_PATH + '/' + submission_filename
     files = os.listdir(PREDICTED_IMAGES_PATH)
 

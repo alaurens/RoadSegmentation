@@ -195,18 +195,37 @@ def img_float_to_uint8(img):
 
 def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
-    size = image.size[0]
-    modify_num = np.random.randint(3)
+    x_size, y_size = image.size
 
-    if modify_num == 1:  # rotate
-        rand_rotate = np.random.randint(90)
-        image = rotate_with_extension(image, rand_rotate)
-        groundtruth = rotate_with_extension(groundtruth, rand_rotate)
+    def rotate_augmentation():
+        rand_rotate = np.random.randint(180)
+        return lambda image: rotate_with_extension(image, rand_rotate)
 
-    if modify_num == 2:
+    def shift_augmentation():
         shift = np.random.randint(-200, 201, size=2)
-        image = shift_with_extension(image, shift)
-        groundtruth = shift_with_extension(groundtruth, shift)
+        return lambda image: shift_with_extension(image, shift)
+
+    def zoom_augmentation():
+        x_len, y_len = np.random.randint(200, 350, size=2)
+        left = np.random.randint(x_size-x_len)
+        upper = np.random.randint(y_size-y_len)
+        right, lower = left + x_len, upper+y_len
+        box = (left, upper, right, lower)
+        return lambda image: image.transform(image.size, Image.EXTENT, box)
+
+    def flip_augmentation():
+        return lambda image: ImageOps.flip(image)
+
+    def mirror_augmentation():
+        return lambda image: ImageOps.mirror(image)
+
+    augmentations = [rotate_augmentation, shift_augmentation, zoom_augmentation,
+                     flip_augmentation, mirror_augmentation]
+
+    for augmentation in augmentations:
+        if np.random.randint(2) == 1:
+            image = augmentation()(image)
+            groundtruth = augmentation()(groundtruth)
 
     if noise:
         noises = ["s&p", "gauss"]

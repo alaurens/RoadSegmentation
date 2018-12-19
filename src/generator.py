@@ -9,8 +9,11 @@ from data_process import *
 
 
 class threadsafe_iter:
+
     """Takes an iterator/generator and makes it thread-safe by
     serializing call to the `next` method of given iterator/generator.
+    This function and the following was taken from:
+        https://anandology.com/blog/using-iterators-and-generators/
     """
 
     def __init__(self, it):
@@ -34,7 +37,7 @@ def threadsafe_generator(f):
 
 
 @threadsafe_generator
-def train_generator(patch_dim, relabel_mask=False):
+def train_generator(patch_dim, relabel_mask=True):
 
     images_name = os.listdir(TRAIN_IMAGES_PATH)
     pattern = re.compile('(.*)\.png')
@@ -67,7 +70,7 @@ def train_generator(patch_dim, relabel_mask=False):
 
 
 @threadsafe_generator
-def validation_generator(patch_dim, relabel_mask=False):
+def validation_generator(patch_dim, relabel_mask=True):
 
     images_name = os.listdir(VALIDATION_IMAGES_PATH)
     pattern = re.compile('(.*)\.png')
