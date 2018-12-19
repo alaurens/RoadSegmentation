@@ -49,12 +49,15 @@ def train_generator(patch_dim):
 
         img = Image.open(TRAIN_IMAGES_PATH + "/" + file)
         mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
-        mask = relabel(mask)
+        #mask = relabel(mask)
 
         img, mask = generate_rand_image(img, mask, noise=True, flip=True)
 
         np_img = pillow2numpy(img)
         np_mask = pillow2numpy(mask)/255
+
+        np_img = resize_image(np_img, patch_dim)
+        np_mask = resize_image(np_mask, patch_dim)
 
         batch_img = get_patches(np_img, patch_dim)
         batch_mask = get_patches(np_mask, patch_dim)
@@ -95,7 +98,7 @@ def test_generator(patch_dim, num_test):
 
         np_img = pillow2numpy(img)
 
-        np_img = resize_test_image(np_img, patch_dim)
+        np_img = resize_image(np_img, patch_dim)
 
         batch_img = get_patches(np_img, patch_dim)
 
