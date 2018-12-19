@@ -128,7 +128,9 @@ def apply_set_of_filters(filters, image):
 
 
 def rotate_with_extension(image, alpha):
-
+    """
+        Rotates an image while extending the border thourgh mirroring
+    """
     # determine if alpha is larger than 90 degrees and rotate accordingly
     quarter = int(alpha / 90)
     image = image.rotate(quarter * 90)
