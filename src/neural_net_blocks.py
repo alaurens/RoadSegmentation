@@ -87,7 +87,7 @@ def straight_block1(input_layer, layer_size, dropout=0, batch_norm=True,
 def BN_CONV_RELU(input_layer, layer_size, activation_name='relu',
                  padding='same', kernel_init='he_normal'):
 
-    batch_norm = BatchNormalization(momentum=0.01)(input_layer)
+    batch_norm = BatchNormalization()(input_layer)
 
     conv = Conv2D(layer_size, 3, padding=padding, kernel_initializer=kernel_init)(batch_norm)
 
@@ -98,7 +98,7 @@ def BN_CONV_RELU(input_layer, layer_size, activation_name='relu',
 def BN_UPCONV_RELU(input_layer, layer_size, activation_name='relu',
                    padding='same', kernel_init='he_normal'):
 
-    batch_norm = BatchNormalization(momentum=0.01)(input_layer)
+    batch_norm = BatchNormalization()(input_layer)
 
     conv = Conv2DTranspose(layer_size, 3, strides=(2, 2), padding=padding,
                            kernel_initializer=kernel_init)(batch_norm)
