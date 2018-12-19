@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 
-iter = 304
+iter = 312
 relabel_mask = True
 epoch_step = 10
 steps_per_epoch = 1000
@@ -17,13 +17,13 @@ if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 
 
-model_num = 1
-layers = [128, 256, 512, 1024]
-in_sizes = [400]
+# model_num = 1
+# layers = [128, 256, 512, 1024]
+# in_sizes = [400]
 
-#model_num = 2
-#layers = [64]*5
-#in_sizes = [160, 320]
+model_num = 2
+layers = [64, 128, 256, 512, 1024]
+in_sizes = [160, 320]
 
 
 activation = 'relu'
@@ -33,9 +33,9 @@ for in_size in in_sizes:
     validation_data_gen = validation_generator(in_size, relabel_mask=relabel_mask)
 
     if model_num == 1:
-        model = unet1(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
+        model = unet_3_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
     else:
-        model = unet2(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
+        model = unet_4_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
 
     Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
                                            verbose=1, mode='auto',
