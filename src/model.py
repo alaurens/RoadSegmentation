@@ -68,6 +68,8 @@ def unet2(input_size=(320, 320, 3), layers=[64]*5, activation='relu', pretrained
 
     model = Model(inputs, outputs)
 
+    model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
+
     # model.summary()
 
     if(pretrained_weights):

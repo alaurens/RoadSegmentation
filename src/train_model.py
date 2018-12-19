@@ -16,16 +16,16 @@ if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 
 
-model_num = 1
-layers = [128, 256, 512, 1024]
-in_sizes = [400]
+#model_num = 1
+#layers = [128, 256, 512, 1024]
+#in_sizes = [400]
 
-#model_num = 2
-#layers = [64]*5
-#in_sizes = [160, 320]
+model_num = 2
+layers = [64]*5
+in_sizes = [160, 320]
 
 
-activation = 'leaky'
+activation = 'relu'
 
 for in_size in in_sizes:
     train_data_gen = train_generator(in_size)
@@ -41,7 +41,7 @@ for in_size in in_sizes:
                                            min_delta=0.0001, cooldown=0, min_lr=0)
     Early_Stopping = EarlyStopping(monitor='val_acc', min_delta=0.00001, patience=10,
                                    verbose=1, mode='auto', baseline=None,
-                                   restore_best_weights=False)
+                                   restore_best_weights=True)
     last_epoch = 0
     for epochs in range(1, int(num_epoch/epoch_step) + 1):
 
@@ -58,7 +58,7 @@ for in_size in in_sizes:
                             callbacks=[Learning_reduction, history,
                                        Early_Stopping, model_checkpoint],
                             validation_steps=20, validation_data=validation_data_gen,
-                            use_multiprocessing=True)
+                            use_multiprocessing=False)
 
         hist = history.history
         log_info(iter, in_size, layers, last_epoch, steps_per_epoch,
