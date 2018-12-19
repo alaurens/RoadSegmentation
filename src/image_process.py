@@ -196,7 +196,7 @@ def img_float_to_uint8(img):
 def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
     size = image.size[0]
-    modifiy_num = np.random.randin(3)
+    modifiy_num = np.random.randint(3)
 
     if modify_num == 1:  # rotate
         rand_rotate = np.random.randint(90)
