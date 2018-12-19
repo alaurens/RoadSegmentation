@@ -77,7 +77,7 @@ def validation_generator(patch_dim):
 
             img = Image.open(VALIDATION_IMAGES_PATH + "/" + file)
             mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
-            mask = relabel(mask)
+            #mask = relabel(mask)
 
             np_img = pillow2numpy(img)
             np_mask = pillow2numpy(mask)/255
