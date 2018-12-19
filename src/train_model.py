@@ -43,7 +43,7 @@ for in_size in in_sizes:
                                    verbose=1, mode='auto', baseline=None,
                                    restore_best_weights=False)
     last_epoch = 0
-    for epochs in range(1, int(num_epoch/steps_per_epoch) + 1):
+    for epochs in range(1, int(num_epoch/epoch_step) + 1):
 
         iter = iter+1
         init_epoch = last_epoch
