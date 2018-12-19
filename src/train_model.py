@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 
-iter = 296
+iter = 304
 relabel_mask = True
 epoch_step = 10
 steps_per_epoch = 400
