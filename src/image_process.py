@@ -219,18 +219,19 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
     def mirror_augmentation():
         return lambda image: ImageOps.mirror(image)
 
-    augmentations_one_of = [rotate_augmentation, shift_augmentation]
-    augmentations_any_of = [flip_augmentation, mirror_augmentation]
-
-    idx = np.random.randint(len(augmentations_one_of) + 1)
-    if not idx == 0:
-        image = augmentations_one_of[idx-1]()(image)
-        groundtruth = augmentations_one_of[idx-1]()(groundtruth)
-
-    for augmentation in augmentations_any_of:
+    # augmentations_one_of = [rotate_augmentation(), shift_augmentation()]
+    # augmentations_any_of = [zoom_augmentation(), flip_augmentation(), mirror_augmentation()]
+    #
+    # idx = np.random.randint(len(augmentations_one_of) + 1)
+    # if not idx == 0:
+    #     image = augmentations_one_of[idx-1](image)
+    #     groundtruth = augmentations_one_of[idx-1](groundtruth)
+    augmentations = [rotate_augmentation(), shift_augmentation(), zoom_augmentation(),
+                     flip_augmentation(), mirror_augmentation()]
+    for augmentation in augmentations:
         if np.random.randint(2) == 1:
-            image = augmentation()(image)
-            groundtruth = augmentation()(groundtruth)
+            image = augmentation(image)
+            groundtruth = augmentation(groundtruth)
 
     if noise:
         noises = ["s&p", "gauss"]
