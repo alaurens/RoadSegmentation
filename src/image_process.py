@@ -180,7 +180,7 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
 
     size = image.size[0]
 
-    rand_rotate = np.random.randint(360)
+    rand_rotate = np.random.randint(90)
 
     image = rotate_with_extension(image, rand_rotate)
     groundtruth = rotate_with_extension(groundtruth, rand_rotate)
