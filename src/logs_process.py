@@ -12,10 +12,8 @@ def get_all_maxes(acc, loss, val_acc, val_loss):
     return [str(max(acc)), str(min(loss)), str(max(val_acc)), str(min(val_loss))]
 
 
-def transform_line(line):
+def transform_line(line, start, end):
     r = line.split(',')
-    start = r.index("accuracy")
-    end = r.index("validation loss")
     acc, loss, val_acc, val_loss = r[start:end]
     r[start:end] = get_all_maxes(acc, loss, val_acc, val_loss)
     line = ','.join(r) + '\n'
@@ -23,17 +21,25 @@ def transform_line(line):
 
 
 def combine_all_logs():
-    num_files = 276
+    num_files = 296
     fout = open(LOGS_PATH + "/combined.csv", "w")
     # first file:
     f = open(LOGS_PATH + "/log1.csv")
-    fout.write('log_num,' + f.readline())
+    header = f.readline()
+
+    start = header.split(',').index("accuracy")
+    if "validation loss" in header.split(','):
+        end = header.split(',').index("validation loss") + 1
+    else:
+        end = header.split(',').index("validation loss\n") + 1
+
+    fout.write('log_num,' + header)
     # now the rest:
     for num in range(1, num_files+1):
         f = open(LOGS_PATH + "/log"+str(num)+".csv")
         f.__next__()  # skip the header
         for line in f:
-            line = str(num) + ',' + transform_line(line)
+            line = str(num) + ',' + transform_line(line, start, end)
             fout.write(line)
         f.close()  # not really needed
     fout.close()
