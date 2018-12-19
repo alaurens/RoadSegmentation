@@ -14,12 +14,10 @@ def get_all_maxes(acc, loss, val_acc, val_loss):
 
 def transform_line(line):
     r = line.split(',')
-    if r[-1] == 'activation':
-        end = -2
-    else:
-        end = -1
-    acc, loss, val_acc, val_loss = r[4:end]
-    r[4:end] = get_all_maxes(acc, loss, val_acc, val_loss)
+    start = r.index("accuracy")
+    end = r.index("validation loss")
+    acc, loss, val_acc, val_loss = r[start:end]
+    r[start:end] = get_all_maxes(acc, loss, val_acc, val_loss)
     line = ','.join(r) + '\n'
     return line
 
@@ -42,7 +40,7 @@ def combine_all_logs():
 
 
 def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
-             val_acc_list, loss_list, val_loss_list, activation):
+             val_acc_list, loss_list, val_loss_list, activation, relabel_mask):
     if not os.path.exists(LOGS_PATH):
         os.mkdir(LOGS_PATH)
     with open(LOGS_PATH + '/log' + str(iter) + '.csv', mode='w') as log_file:
@@ -51,7 +49,7 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
         log_writer.writerow(['input size', 'layers', 'number epochs',
                              'step per epoch', 'accuracy',
                              'loss', 'validation accuracy',
-                             'validation loss', 'activation'])
+                             'validation loss', 'activation', 'relabel mask'])
         log_writer.writerow([str(in_size),
                              '[' + ' '.join(str(l) for l in layers) + ']',
                              str(epochs),
@@ -60,4 +58,5 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
                              '[' + ' '.join("{:.6f}".format(l) for l in loss_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_acc_list) + ']',
                              '[' + ' '.join("{:.6f}".format(l) for l in val_loss_list) + ']',
-                             activation])
+                             activation,
+                             relabel_mask])

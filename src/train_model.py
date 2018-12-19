@@ -8,6 +8,7 @@ from logs_process import log_info
 
 
 iter = 276
+relabel_mask = False
 epoch_step = 10
 steps_per_epoch = 300
 num_epoch = 100
@@ -28,8 +29,8 @@ in_sizes = [160, 320]
 activation = 'relu'
 
 for in_size in in_sizes:
-    train_data_gen = train_generator(in_size)
-    validation_data_gen = validation_generator(in_size)
+    train_data_gen = train_generator(in_size, relabel_mask=relabel_mask)
+    validation_data_gen = validation_generator(in_size, relabel_mask=relabel_mask)
 
     if model_num == 1:
         model = unet1(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
@@ -63,4 +64,4 @@ for in_size in in_sizes:
         hist = history.history
         log_info(iter, in_size, layers, last_epoch, steps_per_epoch,
                  hist['acc'], hist['val_acc'],
-                 hist['loss'], hist['val_loss'], activation)
+                 hist['loss'], hist['val_loss'], activation, relabel_mask)

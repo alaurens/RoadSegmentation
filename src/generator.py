@@ -34,7 +34,7 @@ def threadsafe_generator(f):
 
 
 @threadsafe_generator
-def train_generator(patch_dim):
+def train_generator(patch_dim, relabel_mask=False):
 
     images_name = os.listdir(TRAIN_IMAGES_PATH)
     pattern = re.compile('(.*)\.png')
@@ -49,7 +49,8 @@ def train_generator(patch_dim):
 
         img = Image.open(TRAIN_IMAGES_PATH + "/" + file)
         mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
-        #mask = relabel(mask)
+        if relabel_mask:
+            mask = relabel(mask)
 
         img, mask = generate_rand_image(img, mask, noise=True, flip=True)
 
@@ -66,7 +67,7 @@ def train_generator(patch_dim):
 
 
 @threadsafe_generator
-def validation_generator(patch_dim):
+def validation_generator(patch_dim, relabel_mask=False):
 
     images_name = os.listdir(VALIDATION_IMAGES_PATH)
     pattern = re.compile('(.*)\.png')
@@ -77,10 +78,14 @@ def validation_generator(patch_dim):
 
             img = Image.open(VALIDATION_IMAGES_PATH + "/" + file)
             mask = Image.open(GROUNDTRUTH_PATH + "/" + file)
-            #mask = relabel(mask)
+            if relabel_mask:
+                mask = relabel(mask)
 
             np_img = pillow2numpy(img)
             np_mask = pillow2numpy(mask)/255
+
+            np_img = resize_image(np_img, patch_dim)
+            np_mask = resize_image(np_mask, patch_dim)
 
             batch_img = get_patches(np_img, patch_dim)
             batch_mask = get_patches(np_mask, patch_dim)
