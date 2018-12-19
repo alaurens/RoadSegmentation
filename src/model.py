@@ -68,7 +68,7 @@ def unet_4_pool(input_size=(400, 400, 3), layers=[64, 128, 256, 512, 1024],
 
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
-    model.summary()
+    # model.summary()
 
     if(pretrained_weights):
         model.load_weights(pretrained_weights)
