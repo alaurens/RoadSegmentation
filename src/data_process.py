@@ -31,21 +31,22 @@ def load_image_train():
     return imgs, a3d
 
 
-def resize_test_image(test_image, patch_dim):
+def resize_image(np_image, patch_dim):
 
-    if len(test_image.shape) == 2:
-        test_image = np.expand_dims(test_image, axis=3)
+    if len(np_image.shape) == 2:
+        np_image = np.expand_dims(np_image, axis=3)
 
-    if np.size(test_image, 0) % patch_dim == 0:
-        test_image = test_image
+    if np.size(np_image, 0) % patch_dim == 0:
+        return np_image
+
     else:
-        test_image = numpy2pillow(test_image)
-        add_pixel = patch_dim*(np.floor(np.size(test_image, 0) /
-                                        patch_dim)+1) - np.size(test_image, 0)
-        test_image = mirror_extend(add_pixel/2, test_image)
-        test_image = pillow2numpy(test_image)
+        np_image = numpy2pillow(np_image)
+        add_pixel = patch_dim*(np.floor(np.size(np_image, 0) /
+                                        patch_dim)+1) - np.size(np_image, 0)
+        np_image = mirror_extend(add_pixel/2, np_image)
+        np_image = pillow2numpy(np_image)
 
-    return test_image
+        return np_image
 
 
 def reconstruct_images(patches, num_images):
