@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 # Number of iteration up to now for the logging
-iter = 344
+iter = 350
 
 # Boolean to decide if relabeling of the mask image
 relabel_mask = True
@@ -17,6 +17,9 @@ epoch_step = 10
 steps_per_epoch = 1000
 # Number of epochs
 num_epoch = 200
+
+# Number of images for validation
+num_validation_images = 1
 
 # Create the log file if necessary
 if not os.path.exists(LOGS_PATH):
@@ -34,7 +37,7 @@ layers = [64, 128, 256, 512, 1024]
 in_sizes = [400]
 
 # If you want to start training from pre-trained weights
-pre_weights = None  # WEIGHTS_PATH + '/weights322.hdf5'
+pre_weights = WEIGHTS_PATH + '/weights342.hdf5'
 
 # Activation function for the convolutional layers
 activation = 'relu'
@@ -86,8 +89,8 @@ for in_size in in_sizes:
                             epochs=last_epoch, initial_epoch=init_epoch,
                             callbacks=[Learning_reduction, history,
                                        Early_Stopping, model_checkpoint],
-                            validation_steps=20, validation_data=validation_data_gen,
-                            use_multiprocessing=False)
+                            validation_steps=num_validation_images,
+                            validation_data=validation_data_gen, use_multiprocessing=False)
 
         # Get the history and save to the logs
         hist = history.history
