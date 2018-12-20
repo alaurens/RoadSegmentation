@@ -8,6 +8,10 @@ from paths_to_data import *
 from image_process import *
 from data_process import *
 
+"""
+File that provides the image generators for traing, validation and testing
+"""
+
 
 class threadsafe_iter:
 

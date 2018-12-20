@@ -22,7 +22,7 @@ def resize_image(np_image, patch_dim):
     Resizes an image such that the final image size is a multiple of the patch size
     """
 
-    # Adds an other dimension for images with one channel
+    # Adds another dimension for images with one channel
     if len(np_image.shape) == 2:
         np_image = np.expand_dims(np_image, axis=3)
 
@@ -33,12 +33,16 @@ def resize_image(np_image, patch_dim):
     else:
         np_image = numpy2pillow(np_image)
 
+        # Computes the number of patches in the extended image
         nb_patch = int(np.size(np_image, 0) / patch_dim) + 1
 
-        # Adds a precise number of pixel in each border using mirror extension
+        # Number of pixels to add to get the correct size
         add_pixel = patch_dim * nb_patch - np.size(np_image, 0)
+
+        # Adds the the pixels using a mirror on the borders
         np_image = mirror_extend(add_pixel/2, np_image)
 
+        # COnvert to numpy
         np_image = pillow2numpy(np_image)
 
         return np_image
@@ -51,29 +55,35 @@ def reconstruct_images(patches, num_images):
 
     # Computes the dimension of the original images
     num_patches = patches.shape[0]
+    # Number of patches per image and patches per image side
     patches_per_img = int(num_patches / num_images)
     patches_per_side = int(math.sqrt(patches_per_img))
     images = []
 
+    # Get the width of one image and the number of channels
     width = patches.shape[2] * patches_per_side
     num_channels = patches.shape[3]
 
-    # Patches are concatenated by line and then by column to reconstruct each images
+    # Patches are concatenated line by line and then all lines are concatenated
     for i in range(num_images):
+        # Initialize a container for the images
         b = np.empty((0, width, num_channels))
+        # Loop through images
         for j in range(i*patches_per_img, (i+1)*patches_per_img, patches_per_side):
+            # Concatenate line by line
             tmp = np.concatenate((patches[j:j+patches_per_side]), axis=1)
             b = np.concatenate((b, tmp), axis=0)
+        # Add the reconstructed image to the list of all images
         images.append(b.copy())
     return images
 
 
 def crop_prediction(image, original_img_size):
     """
-    Crops a prediction image to give it the same size as the test image use for prediction
+    Crops a prediction to obtain the correct size prediction
     """
 
-    # Computes the intial and final index of pixel to keep
+    # Computes the intial and final position of the box to crop
     shape = image.size[0]
     border_i = (shape - original_img_size)/2
     border_f = border_i + original_img_size
@@ -86,16 +96,15 @@ def crop_prediction(image, original_img_size):
 
 def relabel(img):
     """
-    Transform a mask into black-white images by attributing to each pixel label 0 and 1 according to a
-    specific threshold
+    Transforms a mask into black-white images by attributing to each pixel label
+    0 and 1 according to a specific threshold
     """
 
-    # Converts the image in a numpy array and takes the maximum pixel value of this array
+    # Converts the image in a numpy array and take the maximum value of this array
     np_img = pillow2numpy(img)
     max = np.max(np_img)
 
-    # Sets pixels to 0 if their value are smaller or equal to 90% of the maximum pixel value,
-    # else sets them to 1
+    # Relabels pixels to 1 or 0 according to a threshold value
     threshold = 0.6
     np_img[np_img <= (max*threshold)] = 0
     np_img[np_img > (max*threshold)] = 1
@@ -105,7 +114,8 @@ def relabel(img):
 
 def relabel_all_images():
     """
-    Transforms all the mask into black-white images using the previsous relabel function
+    Transforms all the masks into black-white images using the previsous relabel
+    and saves the result
     """
 
     # Creates a list of all files constituting the folder of groundtruth images
@@ -123,14 +133,16 @@ def relabel_all_images():
 
 def get_patches(np_img, patch_dim):
     """
-    Cuts the image in small patches
+    Cuts the image in patches according the the patch size
     """
 
     # Adds an other dimension for images with one channel
     if len(np_img.shape) == 2:
         np_img = np.expand_dims(np_img, axis=3)
 
+    # Get the width/height of on array and the number of channels
     size, _, num_channels = np_img.shape
+    # Dimension of the patches
     dim = (0, patch_dim, patch_dim, num_channels)
     patches = []
 
@@ -148,19 +160,19 @@ def get_patches(np_img, patch_dim):
 
 def save_results(patches, num_images, original_img_size):
     """
-    Saves in a folder images of prediction after reconstruction and crop
+    Takes the predicted patches, reconstructs, the full predictions and saves them
     """
 
-    # Creates a folder to stock predicted images in case the folder already doesn't exist
+    # Creates a folder to store predicted images if it dosen't exist
     if not os.path.exists(PREDICTED_IMAGES_PATH):
         os.mkdir(PREDICTED_IMAGES_PATH)
 
     # Reconstructs prediction images from patches
     image = reconstruct_images(patches, num_images)
 
-    # Crops prediction images to give them the same size than their satellite images
     for i, item in enumerate(image):
 
+        # Crops the enlarged predicitons to the correct size
         img = numpy2pillow(item.squeeze())
         pred = crop_prediction(img, original_img_size)
 

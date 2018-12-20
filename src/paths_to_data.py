@@ -1,5 +1,9 @@
 import os
 
+"""
+The differents paths to access our data allowing us to make sure there are no
+issues when loading images
+"""
 FILE_PATH = os.path.dirname(__file__)
 GROUNDTRUTH_PATH = FILE_PATH + '/../data/groundtruth/'
 TRAIN_IMAGES_PATH = FILE_PATH + "/../data/images/"

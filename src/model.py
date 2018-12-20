@@ -8,32 +8,51 @@ from keras import backend as keras
 from neural_net_blocks import *
 
 
+"""
+These two models were created beased on the work done at:
+    https://github.com/zhixuhao/unet
+"""
+
+
 def unet_3_pool(input_size=(400, 400, 3), layers=[128, 256, 512, 1024],
                 activation='relu', pretrained_weights=None):
+    """
+    Defines a unet model with 3 pooling layers
+    """
+
+    # Define the input
     inputs = Input(input_size)
 
+    # Apply successively 3 down blocks, the descending part of the unet
     pool1, conv1 = down_block1(inputs, layers[0], activation_name=activation)
 
     pool2, conv2 = down_block1(pool1, layers[1], activation_name=activation)
 
     pool3, conv3 = down_block1(pool2, layers[2], activation_name=activation)
 
+    # Apply 2 2D convolutions on the lowest part of the unet
     conv4 = straight_block1(pool3, layers[3], activation_name=activation)
 
+    # Resample the image to the size of the original one using successive convolutions and upscalings
     conv5 = up_block1(conv4, layers[2], conv3, activation_name=activation)
 
     conv6 = up_block1(conv5, layers[1], conv2, activation_name=activation)
 
     conv7 = up_block1(conv6, layers[0], conv1, activation_name=activation)
 
+    # Apply a sigmoid activation function to every element of the final set of
+    # convoluted images to obtain the classification
     conv8 = Conv2D(1, 1, activation='sigmoid')(conv7)
 
+    # Initialize the model
     model = Model(inputs=inputs, outputs=conv8)
 
+    # Choose the optimizer, loss function and metrics for the model
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
     # model.summary()
 
+    # Load the pre trained weights if available
     if(pretrained_weights):
         model.load_weights(pretrained_weights)
 
@@ -42,6 +61,10 @@ def unet_3_pool(input_size=(400, 400, 3), layers=[128, 256, 512, 1024],
 
 def unet_4_pool(input_size=(400, 400, 3), layers=[64, 128, 256, 512, 1024],
                 activation='relu', pretrained_weights=None):
+    """
+    Defines a unet model with 4 pooling layers structure similar to the one with
+    3 pooling layers (see previous model for description of layers)
+    """
     inputs = Input(input_size)
 
     pool1, conv1 = down_block1(inputs, layers[0], activation_name=activation)
@@ -65,47 +88,6 @@ def unet_4_pool(input_size=(400, 400, 3), layers=[64, 128, 256, 512, 1024],
     conv10 = Conv2D(1, 1, activation='sigmoid')(conv9)
 
     model = Model(inputs=inputs, outputs=conv10)
-
-    model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
-
-    # model.summary()
-
-    if(pretrained_weights):
-        model.load_weights(pretrained_weights)
-
-    return model
-
-
-def unet_deep_sens(input_size=(320, 320, 3), layers=[64]*5, activation='relu', pretrained_weights=None):
-    """
-    The following unet is copied from the structure proposed by the following website:
-    https://deepsense.ai/deep-learning-for-satellite-imagery-via-image-segmentation/
-    """
-    inputs = Input(input_size)
-
-    pool, concat_conv1 = down_block2(inputs, layers[0], first=True)
-
-    pool, concat_conv2 = down_block2(pool, layers[1], activation_name=activation)
-
-    pool, concat_conv3 = down_block2(pool, layers[2], activation_name=activation)
-
-    pool, concat_conv4 = down_block2(pool, layers[3], activation_name=activation)
-
-    pool, concat_conv5 = down_block2(pool, layers[4], activation_name=activation)
-
-    upconv = up_block2(pool, layers[4], activation_name=activation)
-
-    upconv = up_block2(upconv, layers[4], activation_name=activation, concat_layer=concat_conv5)
-
-    upconv = up_block2(upconv, layers[3], activation_name=activation, concat_layer=concat_conv4)
-
-    upconv = up_block2(upconv, layers[2], activation_name=activation, concat_layer=concat_conv3)
-
-    upconv = up_block2(upconv, layers[1], activation_name=activation, concat_layer=concat_conv2)
-
-    outputs = up_block2(upconv, layers[0], activation_name=activation, concat_layer=concat_conv1, output=True)
-
-    model = Model(inputs, outputs)
 
     model.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
 
