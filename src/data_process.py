@@ -8,13 +8,9 @@ from image_process import *
 from paths_to_data import *
 from mask_to_submission import *
 
-
-def load_image(infilename):
-    """
-    Loads an image from a specific file to the numpy format
-    """
-    data = mpimg.imread(infilename)
-    return data
+"""
+This file contains all function relative to the data processing
+"""
 
 
 def resize_image(np_image, patch_dim):
@@ -199,3 +195,38 @@ def create_submission(submission_filename):
 
     # Converts the prediction images into csv files
     masks_to_submission(submission_filename, images_name)
+
+
+def load_image(infilename):
+    """
+    Loads an image from a specific file to the numpy format
+    """
+    data = mpimg.imread(infilename)
+    return data
+
+
+def img_float_to_uint8(img):
+    """
+        Transforms a given image from floating point numbers (from 0 to 1)
+        to ints (from 0 to 255)
+    """
+    # Remove the minimum of the image
+    rimg = img - np.min(img)
+    # Divide by the max to garanty a spread from 0 to 1 and map to ints from 0 to 255
+    rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
+    return rimg
+
+
+def pillow2numpy(img):
+    """Function to convert an image from pillow to numpy"""
+    return np.array(img)
+
+
+def numpy2pillow(np_img):
+    """Function to convert an image from numpy to pillow"""
+    # Convert the numpy matrix to a 0 to 255 matrix
+    tmp = img_float_to_uint8(np_img)
+    # Remove the channels index if it is one (black and white images)
+    tmp = tmp.squeeze()
+    # Transform to pillow
+    return Image.fromarray(tmp)

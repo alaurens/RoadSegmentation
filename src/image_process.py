@@ -200,18 +200,6 @@ def shift_with_extension(image, shift):
     return extend.crop((left, upper, right, lower))
 
 
-def img_float_to_uint8(img):
-    """
-        Transforms a given image from floating point numbers (from 0 to 1)
-        to ints (from 0 to 255)
-    """
-    # Remove the minimum of the image
-    rimg = img - np.min(img)
-    # Divide by the max to garanty a spread from 0 to 1 and map to ints from 0 to 255
-    rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
-    return rimg
-
-
 def generate_rand_image(image, groundtruth, noise=True, flip=True):
     """
     Given an image and the groudtruth mask, generates a augmented version of
@@ -273,18 +261,3 @@ def generate_rand_image(image, groundtruth, noise=True, flip=True):
             image = add_noise(image, type=noises[noise_rand])
 
     return (image, groundtruth)
-
-
-def pillow2numpy(img):
-    """Function to convert an image from pillow to numpy"""
-    return np.array(img)
-
-
-def numpy2pillow(np_img):
-    """Function to convert an image from numpy to pillow"""
-    # Convert the numpy matrix to a 0 to 255 matrix
-    tmp = img_float_to_uint8(np_img)
-    # Remove the channels index if it is one (black and white images)
-    tmp = tmp.squeeze()
-    # Transform to pillow
-    return Image.fromarray(tmp)

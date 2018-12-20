@@ -72,7 +72,7 @@ def train_generator(patch_dim, relabel_mask=True):
             mask = relabel(mask)
 
         # Data augmentation applied to the image
-        img, mask = generate_rand_image(img, mask, noise=True, flip=True)
+        #img, mask = generate_rand_image(img, mask, noise=True, flip=True)
 
         # Generate the numpy arrays from the images and scale the mask to 0 and 1
         # so the logistic regression function can work

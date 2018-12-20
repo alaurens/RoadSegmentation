@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 # Number of iteration up to now for the logging
-iter = 323
+iter = 343
 
 # Boolean to decide if relabeling of the mask image
 relabel_mask = True
@@ -34,7 +34,7 @@ layers = [64, 128, 256, 512, 1024]
 in_sizes = [400]
 
 # If you want to start training from pre-trained weights
-pre_weights = WEIGHTS_PATH + '/weights322.hdf5'
+pre_weights = None  # WEIGHTS_PATH + '/weights322.hdf5'
 
 # Activation function for the convolutional layers
 activation = 'relu'
