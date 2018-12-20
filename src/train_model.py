@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 # Number of iteration up to now for the logging
-iter = 343
+iter = 344
 
 # Boolean to decide if relabeling of the mask image
 relabel_mask = True

@@ -101,30 +101,11 @@ def relabel(img):
     max = np.max(np_img)
 
     # Relabels pixels to 1 or 0 according to a threshold value
-    threshold = 0.6
+    threshold = 0.3
     np_img[np_img <= (max*threshold)] = 0
     np_img[np_img > (max*threshold)] = 1
 
     return numpy2pillow(np_img)
-
-
-def relabel_all_images():
-    """
-    Transforms all the masks into black-white images using the previsous relabel
-    and saves the result
-    """
-
-    # Creates a list of all files constituting the folder of groundtruth images
-    label_imgs = os.listdir(GROUNDTRUTH_PATH)
-
-    # Creates a folder to stock relabeled images in case the folder already doesn't exist
-    if not os.path.exists(RELABELED_PATH):
-        os.mkdir(RELABELED_PATH)
-
-    # Relabels all image of the list and save them in the appropriate folder
-    for img_name in label_imgs:
-        img = Image.open(GROUNDTRUTH_PATH + '/' + img_name)
-        relabel(img).save(RELABELED_PATH + '/' + img_name, "PNG")
 
 
 def get_patches(np_img, patch_dim):
