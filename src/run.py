@@ -2,10 +2,11 @@ from model import *
 from paths_to_data import *
 from generator import *
 from data_process import *
+import numpy as np
 import h5py
 
 # Random seed normalization
-numpy.random.seed(seed=5)
+np.random.seed(seed=5)
 
 # Number of test images
 num_test_imgs = 50
