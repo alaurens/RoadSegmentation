@@ -1,6 +1,6 @@
 # Road Segmentation Project
 
-### Introduction
+## Introduction
 
 During the second half of the autumn semester 2018, during the course of Machine learning at EPFL we worked on a road segmentation project.
 In this project, we are given a set of satellite images and for each of these images a masks where the roads are labeled. The goal is to be able to correctly predict the mask of a set of test images and evaluate this prediction using the F1 score metric.
@@ -8,7 +8,7 @@ In this project, we are given a set of satellite images and for each of these im
 Using data augmentation and U-nets we were able to achieve a F1 score of 0.903 on the crowdAI competition effectively ranking 3rd
 Our final submission is done by alaurens and has ID number 24871
 
-### Structure of the submission
+## Structure of the submission
 
 The structure of our project is the following:
 ```
@@ -40,7 +40,7 @@ The structure of our project is the following:
 ```
 In the `data` folder we have the data used for the project. The `groundtruth` folder contains the masks of the training images. The `images` folder contains the images used for training the `test_set_images` contains 50 folders each containing a different test image. Please note that we do note modify these folders from the original folders that we downloaded. The `validation` folder contains images that are used for validation. We move some images from the `images` folder to the `validation folder`
 
-###### !!!!!!!!!!!!! If you wish to train the model you must take at least one image from `images` and move it to `validation`
+**!!!!!!!!!!!!! If you wish to train the model you must take at least one image from `images` and move it to `validation`**
 
 The `logs` folder is used to store the logs and the weights during training
 
@@ -63,7 +63,7 @@ The `scr` folder contains the source code to the project. It is composed of:
 * `visualization.py`: This file contains function relative to showing the different images for the report
 
 
-### Packages requirements
+## Packages requirements
 In order to make the different scripts run you must install all packages listed in `requirements.txt`.
 
 In order to install all the packages please use the command :
@@ -72,15 +72,19 @@ In order to install all the packages please use the command :
 
 We recommend the use of virtual environments in order to test the code, see: [**Virtualenvs**](https://www.youtube.com/watch?v=N5vscPTWKOk&ab_channel=CoreySchafer)
 
-###### !!!!!!!!! In order for this to work you must be running a version 3.5 or 3.6 of python. 3.7 is not compatible with tensorflow
+**!!!!!!!!! In order for this to work you must be running a version 3.5 or 3.6 of python. 3.7 is not compatible with tensorflow**
 
 ### Training the U-net
 
-To train the neural network, you must launch the script. `train_model.py`. **The script must be launched from the src folder**
+To train the neural network, you must launch the script. `train_model.py`.
+
+**The script must be launched from the src folder and there must be at least one image in the validation**
+
+**You must place at least one of the training images in the `validation` folder**
 
 Warning, training of the neural networks takes approximately 5 to 10 hours to train on a NVIDIA TESLA P100 GPU available on google cloud. Training the neural network on a personal computer is not feasible.
 
-### Creating the submission for crowdAI
+## Creating the submission for crowdAI
 
 To create the submission you must first download the `hdf5` file containing the weights of the neural network from [**this link**](https://drive.google.com/open?id=1AB4cjfnAnr3rNiNtIChgtamc1Cv9T8Cm) and place it into the `weights` folder.
 
@@ -88,6 +92,6 @@ Then, please run the `run.py` script located in the `src` folder. **The script m
 
 The resulting submission will be located in the folder `submission` under the name: `weights342.csv`
 
-### Training and then using the trained weights
+## Training and then using the trained weights
 
-If you which to train the U-net and then used the train submission you must first train the U-net using `train_model.py` then, you must select the desired `weightsNUM.hdf5` files from the `logs folder`
+If you wish to train the U-net and then use the trained network to create a submission, you must first train the U-net using `train_model.py`. Then, you must select the desired `weightsNUM.hdf5` files from the `logs folder` (take the last one if you want to have the most updated one) and place it in the `weights` folder. You must then modify the script `run.py` and replace the weights name by the correct value. You can then run the script `run.py`.
