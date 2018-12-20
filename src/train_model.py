@@ -7,11 +7,11 @@ import csv
 from logs_process import log_info
 
 
-iter = 322
+iter = 323
 relabel_mask = True
 epoch_step = 10
 steps_per_epoch = 1000
-num_epoch = 100
+num_epoch = 200
 
 if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
@@ -24,7 +24,7 @@ if not os.path.exists(LOGS_PATH):
 model_num = 2
 layers = [64, 128, 256, 512, 1024]
 in_sizes = [400]
-pre_weigths = WEIGHTS_PATH + '/weights322.hdf5'
+pre_weights = WEIGHTS_PATH + '/weights322.hdf5'
 
 
 activation = 'relu'
