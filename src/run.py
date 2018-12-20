@@ -13,7 +13,7 @@ num_test_imgs = 50
 # Size of the test image
 original_image_size = 608
 # Name of the weights to load
-weight_name = 'weights343'
+weight_name = 'weights342'
 # Get the full path to the weights
 weights = WEIGHTS_PATH + '/' + weight_name + '.hdf5'
 # Dimension of the patches used

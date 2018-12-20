@@ -36,7 +36,7 @@ def transform_line(line, start, end):
 def combine_all_logs():
     """Combine all the individual log files into one large file"""
     # The number of files to take
-    num_files = 343
+    num_files = 350
     fout = open(LOGS_PATH + "/combined.csv", "w")
     # first file:
     f = open(LOGS_PATH + "/log1.csv")
@@ -85,3 +85,7 @@ def log_info(iter, in_size, layers, epochs, steps_per_epoch, acc_list,
                              '[' + ' '.join("{:.6f}".format(l) for l in val_loss_list) + ']',
                              activation,
                              relabel_mask])
+
+
+if __name__ == '__main__':
+    combine_all_logs()
