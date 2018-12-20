@@ -17,13 +17,14 @@ if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 
 
-model_num = 1
-layers = [256, 512, 1024, 2048]
-in_sizes = [400]
-
-# model_num = 2
-# layers = [64, 128, 256, 512, 1024]
+# model_num = 1
+# layers = [256, 512, 1024, 2048]
 # in_sizes = [400]
+
+model_num = 2
+layers = [64, 128, 256, 512, 1024]
+in_sizes = [400]
+pre_weigths = WEIGHTS_PATH + '/weights322.hdf5'
 
 
 activation = 'relu'
@@ -33,9 +34,9 @@ for in_size in in_sizes:
     validation_data_gen = validation_generator(in_size, relabel_mask=relabel_mask)
 
     if model_num == 1:
-        model = unet_3_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
+        model = unet_3_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation, pretrained_weights=pre_weights)
     else:
-        model = unet_4_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation)
+        model = unet_4_pool(input_size=(in_size, in_size, 3), layers=layers, activation=activation, pretrained_weights=pre_weights)
 
     Learning_reduction = ReduceLROnPlateau(monitor='val_acc', factor=0.3, patience=10,
                                            verbose=1, mode='auto',
