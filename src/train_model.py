@@ -7,7 +7,7 @@ import csv
 from logs_process import log_info
 
 
-iter = 312
+iter = 322
 relabel_mask = True
 epoch_step = 10
 steps_per_epoch = 1000
@@ -17,13 +17,13 @@ if not os.path.exists(LOGS_PATH):
     os.mkdir(LOGS_PATH)
 
 
-# model_num = 1
-# layers = [128, 256, 512, 1024]
-# in_sizes = [400]
-
-model_num = 2
-layers = [64, 128, 256, 512, 1024]
+model_num = 1
+layers = [256, 512, 1024, 2048]
 in_sizes = [400]
+
+# model_num = 2
+# layers = [64, 128, 256, 512, 1024]
+# in_sizes = [400]
 
 
 activation = 'relu'
