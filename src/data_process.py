@@ -155,9 +155,9 @@ def save_results(patches, num_images, original_img_size):
 
         # Apply dilation and then erosion to fill holes in prediction
         for _ in range(4):
-            pred = pred.filter(ImageFilter.MaxFilter(7))
+            pred = pred.filter(ImageFilter.MaxFilter(5))
         for _ in range(4):
-            pred = pred.filter(ImageFilter.MinFilter(7))
+            pred = pred.filter(ImageFilter.MinFilter(5))
 
         # Save prediction images in the folder in PNG format
         file_name = "prediction{}.png".format(i+1)
