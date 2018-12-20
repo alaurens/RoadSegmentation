@@ -3,9 +3,9 @@
 ## Introduction
 
 During the second half of the autumn semester 2018, in the Machine learning course at EPFL we worked on a road segmentation project.
-In this project, we are given a set of satellite images and for each of these images a masks of the labeled roads. The goal is to be able to correctly predict the mask of a set of test images and evaluate this prediction using the F1 score metric.
+In this project, we are given a set of satellite images and for each of these images a mask of the labeled roads. The goal is to be able to correctly predict the mask of a set of test images and evaluate this prediction using the F1 score metric.
 
-Using data augmentation and U-nets we were able to achieve a F1 score of 0.903 on the crowdAI competition effectively ranking 3rd.
+Using data augmentation and U-Net we were able to achieve a F1 score of 0.903 on the crowdAI competition effectively ranking 3rd.
 Our final submission is done by **alaurens** and has ID number **24871**
 
 ## Structure of the submission
@@ -40,7 +40,7 @@ The structure of our project is the following:
 ├── README.md
 └── requirements.txt
 ```
-In the `data` folder we have the data used for the project. The `groundtruth` folder contains the masks of the training and validation images. The `images` folder contains the images used for training. `test_set_images` contains 50 folders each containing a different test image. Please note that we do note modify these folders from the original folders that we downloaded. The `validation` folder contains images that are used for validation. We move some images from the `images` folder to the `validation` folder.
+In the `data` folder we have the data used for the project. The `groundtruth` folder contains the masks of the training and validation images. The `images` folder contains the images used for training. `test_set_images` contains 50 folders each containing a different test image. Please note that we do not modify these folders from the original folders that we downloaded. The `validation` folder contains images that are used for validation. We move some images from the `images` folder to the `validation` folder.
 
 **!!!!!!!!!!!!! If you wish to train the model you must take at least one image from `images` and move it to `validation`**
 
@@ -52,9 +52,9 @@ The `weights` folder contains the weights used to predict the data
 
 The `scr` folder contains the source code of the project. It is composed of:
 
-* `data_process.py`: This file contains all function relative to the processing of the images to feed to the U-net.
+* `data_process.py`: This file contains all functions relative to the processing of the images to feed to the U-Net.
 
-* `generator.py`: This file contains the train,test and validation generators used to feed the U-net.
+* `generator.py`: This file contains the train,test and validation generators used to feed the U-Net.
 
 * `image_process.py`: This file contains all functions relative to image processing in general and not specifically for this project.
 
@@ -62,7 +62,7 @@ The `scr` folder contains the source code of the project. It is composed of:
 
 * `mask_to_submission`: This file contains functions used for submission, given to us by the professor.
 
-* `model.py`: This file contains the definition of the 2 possible versions of the U-net, one with 3 pooling layers and one with 4.
+* `model.py`: This file contains the definition of the 2 possible versions of the U-Net, one with 3 pooling layers and one with 4.
 
 * `neural_net_blocks.py`: This file contains the different building blocks used to build the larger neural network.
 
@@ -70,9 +70,9 @@ The `scr` folder contains the source code of the project. It is composed of:
 
 * `plotting.ipynb`: Jupyter notebook to generate an image of the report
 
-* `run.py` : This script should be ran to recreate the submission file used for the crowdAI competition.
+* `run.py` : This script should be run to recreate the submission file used for the crowdAI competition.
 
-* `train_model.py`: This script should be ran if you wish to train the neural network.
+* `train_model.py`: This script should be run if you wish to train the neural network.
 
 * `visualization.py`: This file contains functions generating the different images for the report.
 
@@ -88,15 +88,13 @@ We recommend the use of virtual environments to test the code, see: [**Virtualen
 
 !!!!!!!!! For this to work you must be running a version 3.5 or 3.6 of python. Python 3.7 is **not** compatible with tensorflow.
 
-### Training the U-net
+### Training the U-Net
 
 To train the neural network, you must launch the script `train_model.py`.
 
 **The script must be launched from the `src` folder and there must be at least one image in the `validation` folder**
 
-
-
-Warning, training of the neural networks takes approximately 5 to 10 hours on a NVIDIA TESLA P100 GPU available on google cloud. Training the neural network on a personal computer is not feasible.
+Warning, training of the neural network takes approximately 5 to 10 hours on a NVIDIA TESLA P100 GPU available on google cloud. Training the neural network on a personal computer is not feasible.
 
 ## Creating the submission for crowdAI
 
@@ -108,4 +106,4 @@ The resulting submission will be located in the folder `submission` under the na
 
 ## Training and then using the trained weights
 
-If you wish to train the U-net and then use the trained network to create a submission, you must first train the U-net using `train_model.py`. Then, you must select the desired `weightsNUM.hdf5` files from the `logs` folder (take the last one if you want to have the most updated one) and place it in the `weights` folder. You must then modify the script `run.py` and replace the weights name by the correct value. You can then run the script `run.py`.
+If you wish to train the U-Net and then use the trained network to create a submission, you must first train the U-net using `train_model.py`. Then, you must select the desired `weightsNUM.hdf5` file from the `logs` folder (take the last one if you want to have the most updated one) and place it in the `weights` folder. You must then modify the script `run.py` and replace the weights name by the correct value. You can then run the script `run.py`.
